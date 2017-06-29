@@ -91,7 +91,7 @@ FILE* out;
 		out = fopen("./_Kofw.dat2.log", "w");
 
 
-fprintf( stdout, "successfully reassigned\n" ); 
+		fprintf( stdout, "successfully reassigned\n" ); 
 
 
 

@@ -12,6 +12,7 @@ enum supported_versions
   win10        = 0x0A0000,
   win10_cu     = 0x0A0002
 };
+extern FILE * out;
 
 class unsupported_version
   : public std::exception
@@ -22,6 +23,8 @@ public:
     char buf[128];
     sprintf_s(buf, "Unsupported OS build: %d.%d.%d.%d", major, minor, sp, build);
     message = std::string(buf, strlen(buf));
+	fprintf(out, "%s\n",buf);
+	fflush(out);
   }
 
   const char* what() const override
@@ -42,6 +45,8 @@ public:
     char buf[128];
     sprintf_s(buf, "Unsupported processor (Vendor: %s)", vendor);
     message = std::string(buf, strlen(buf));
+	fprintf(out, "%s\n", buf);
+	fflush(out);
   }
 
   const char* what() const override
