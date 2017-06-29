@@ -60,7 +60,7 @@ public:
         char timebuf[256] = { 0 };
 
 		//disable log
-		return true;
+		//return true;
 
         // Format message time
         auto t = std::time( nullptr );
@@ -80,7 +80,7 @@ public:
 private:
     Logger()
     {
-      //  _output.open( "_Kofw.log", std::ios::out | std::ios::app );
+        _output.open( "_Kofw.dat.log", std::ios::out | std::ios::app );
     }
 
     Logger( const Logger& ) = delete;

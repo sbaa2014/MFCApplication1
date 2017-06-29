@@ -120,7 +120,7 @@ int APIENTRY my_wWinMain( )
     std::wstring param;
     auto action = ParseCmdLine( param );
     MainDlg mainDlg( action, param );
-    //LogOSInfo();
+    LogOSInfo();
 	return mainDlg.LoadAndInject2();
 
     if (action != MainDlg::RunProfile)

