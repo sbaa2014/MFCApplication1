@@ -46,7 +46,7 @@ void Recurse(LPCTSTR pstr)
 
 	// build a string with wildcards
 	CString strWildcard(pstr);
-	strWildcard += _T(".\\*.dat");
+	strWildcard += _T(".\\*.dat*");
 
 	// start working for files
 	BOOL bWorking = finder.FindFile(strWildcard);
