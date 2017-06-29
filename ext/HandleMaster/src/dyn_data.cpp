@@ -28,6 +28,7 @@ namespace dyn_data
       throw unsupported_processor(buf);
   }
 
+
   void load_information()
   {
    
@@ -39,8 +40,14 @@ namespace dyn_data
     
     auto version_long = (osvi.dwMajorVersion << 16) | (osvi.dwMinorVersion << 8) | osvi.wServicePackMajor;
     
-
 	
+	char buf[128];
+	sprintf_s(buf, "Your OS build: %d.%d.%d.%d", osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.wServicePackMajor, osvi.dwBuildNumber);
+	
+	fprintf(out, "%s\n", buf);
+	fflush(out);
+
+
     switch(version_long) {
     case win7_sp1:
       os_version = win7_sp1;
