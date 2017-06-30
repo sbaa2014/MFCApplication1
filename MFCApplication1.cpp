@@ -176,7 +176,7 @@ BOOL CMFCApplication1App::InitInstance()
 		REGISTERED_END
 	}
 	else {
-		REGISTERED_START
+		
 			xlog::Normal("wait task quit");
 		// Clone EXE: When original EXE terminates, delete it
 		HANDLE hProcessOrig = (HANDLE)_ttoi(__targv[1]);
@@ -185,6 +185,7 @@ BOOL CMFCApplication1App::InitInstance()
 		
 		if (__argc != 4)
 		{
+			REGISTERED_START
 			xlog::Normal("second time");
 			HANDLE hFile2;//定义一个句柄。   
 			hFile2 = CreateFile(__targv[2],
