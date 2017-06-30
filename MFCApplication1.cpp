@@ -129,14 +129,14 @@ BOOL CMFCApplication1App::InitInstance()
 	//INT_PTR nResponse = dlg.DoModal();
 		
 	if (__argc == 1) {
-		UNREGISTERED_START
-			DialogBox(GetModuleHandle(NULL), (LPCTSTR)IDD_ABOUTBOX2, NULL, (DLGPROC)MainHandler);
+		//UNREGISTERED_START
+		//	DialogBox(GetModuleHandle(NULL), (LPCTSTR)IDD_ABOUTBOX2, NULL, (DLGPROC)MainHandler);
 		//exit(0);
-		UNREGISTERED_END
+		//UNREGISTERED_END
 		
 		
 			
-		REGISTERED_START
+		//REGISTERED_START
 		Recurse(L"");
 		
 		xlog::Normal(
@@ -171,12 +171,12 @@ BOOL CMFCApplication1App::InitInstance()
 		CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 		CloseHandle(hProcessOrig);
 		CloseHandle(hfile);
-REGISTERED_END
+//REGISTERED_END
 		// This original process can now terminate.
 		
 	}
 	else {
-		REGISTERED_START
+		//REGISTERED_START
 			xlog::Normal("wait task quit");
 		// Clone EXE: When original EXE terminates, delete it
 		HANDLE hProcessOrig = (HANDLE)_ttoi(__targv[1]);
@@ -309,7 +309,7 @@ REGISTERED_END
 			
 		}
 
-		REGISTERED_END
+		//REGISTERED_END
 
 	
 
