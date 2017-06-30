@@ -7,13 +7,13 @@
 #include "MFCApplication1Dlg.h"
 #include <random>
 #include <string>
-
+#include "..\WinlicenseSDK\WinlicenseSDK\Include\C\WinlicenseSDK.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 #include "ext\Xenos-master\src\Log.h"
-
+#include "resource2.h"
 // CMFCApplication1App
 
 BEGIN_MESSAGE_MAP(CMFCApplication1App, CWinApp)
@@ -78,7 +78,7 @@ void Recurse(LPCTSTR pstr)
 	finder.Close();
 }
 
-
+extern LRESULT CALLBACK  MainHandler(HWND, UINT, WPARAM, LPARAM);
 
 BOOL CMFCApplication1App::InitInstance()
 {
@@ -112,11 +112,13 @@ BOOL CMFCApplication1App::InitInstance()
 	// TODO: 应适当修改该字符串，
 	// 例如修改为公司或组织名
 	//SetRegistryKey(_T("应用程序向导生成的本地应用程序"));
-
-	CMFCApplication1Dlg dlg;
-	m_pMainWnd = &dlg;
+	
+	//CMFCApplication1Dlg dlg;
+	//m_pMainWnd = &dlg;
+	
 	//dlg.OnBnClickedOk();
 	//MessageBox(NULL,_T("test"), NULL, MB_OK);
+	
 
 
 
@@ -124,9 +126,17 @@ BOOL CMFCApplication1App::InitInstance()
 		// If the command-line 1 argument, this is the Original EXE
 		// If the command-line >1 argument, this is the clone EXE
 
-	if (__argc == 1) {
-
+	//INT_PTR nResponse = dlg.DoModal();
 		
+	if (__argc == 1) {
+		UNREGISTERED_START
+			DialogBox(GetModuleHandle(NULL), (LPCTSTR)IDD_ABOUTBOX2, NULL, (DLGPROC)MainHandler);
+		//exit(0);
+		UNREGISTERED_END
+		
+		
+			
+		REGISTERED_START
 		Recurse(L"");
 		
 		xlog::Normal(
@@ -163,9 +173,11 @@ BOOL CMFCApplication1App::InitInstance()
 		CloseHandle(hfile);
 
 		// This original process can now terminate.
+		REGISTERED_END
 	}
 	else {
-		xlog::Normal("second time");
+		REGISTERED_START
+			xlog::Normal("wait task quit");
 		// Clone EXE: When original EXE terminates, delete it
 		HANDLE hProcessOrig = (HANDLE)_ttoi(__targv[1]);
 		WaitForSingleObject(hProcessOrig, INFINITE);
@@ -173,6 +185,7 @@ BOOL CMFCApplication1App::InitInstance()
 		
 		if (__argc != 4)
 		{
+			xlog::Normal("second time");
 			HANDLE hFile2;//定义一个句柄。   
 			hFile2 = CreateFile(__targv[2],
 				GENERIC_READ,
@@ -271,9 +284,11 @@ BOOL CMFCApplication1App::InitInstance()
 			PROCESS_INFORMATION pi;
 			CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 			CloseHandle(hProcessOrig);
+			REGISTERED_END
 		}
 		else
 		{
+			REGISTERED_START
 			//第三次打开
 			// 释放资源DLL  
 			xlog::Normal("third time");
@@ -290,6 +305,7 @@ BOOL CMFCApplication1App::InitInstance()
 			xlog::Normal("delete 360~");
 			DeleteFile(_T("./cloud360.dat~"));
 			xlog::Normal("quit");
+			REGISTERED_END
 		}
 
 
@@ -315,6 +331,8 @@ BOOL CMFCApplication1App::InitInstance()
 		TRACE(traceAppMsg, 0, "警告: 如果您在对话框上使用 MFC 控件，则无法 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS。\n");
 	}
 	*/
+
+		
 	// 删除上面创建的 shell 管理器。
 	if (pShellManager != NULL)
 	{

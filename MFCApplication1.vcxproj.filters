@@ -33,6 +33,9 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="vc_example.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp">
@@ -44,10 +47,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="vc_example.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCApplication1.rc">
       <Filter>资源文件</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="vc_example.rc">
+      <Filter>头文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>

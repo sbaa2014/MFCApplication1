@@ -180,6 +180,7 @@
       <AdditionalDependencies>$(SolutionDir)build\x64\release\xenos64.lib;$(SolutionDir)build\x64\release\blackbone.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <LinkStatus>true</LinkStatus>
+      <AdditionalLibraryDirectories>D:\Prg\my_code\kingofwar\WinlicenseSDK\WinlicenseSDK\Lib\COFF\</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -201,6 +202,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="vc_example.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp" />
@@ -211,9 +213,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vc_example.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCApplication1.rc" />
+    <ResourceCompile Include="vc_example.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\test_tool\Cloud360.dll" />
