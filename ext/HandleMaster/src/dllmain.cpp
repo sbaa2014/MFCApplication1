@@ -11,6 +11,7 @@
 #include "..\..\AES_Test\AES_Test\AES_Test\AES_Test\AesHelper.h"
 #include <random>
 #include <string>
+#include  <io.h>
 
 
 #pragma comment(lib,"crypt32")
@@ -97,15 +98,22 @@ FILE* out;
 
 		dyn_data::ensure_intel_cpu();
 		dyn_data::load_information();
+		auto pid=0;
+		while (1) {
+			 pid = process::find(L"TslGame.exe");
 
-		auto pid = process::find(L"TslGame.exe");
+			if (!pid)
+			{
+				//throw std::runtime_error("Process not running");
+				fprintf(out, "Process not running,wait\n");
 
-		if (!pid)
-			//throw std::runtime_error("Process not running");
-		fprintf(out, "Process not running\n");
 
-		fflush(out);
-
+				fflush(out);
+				Sleep(2000);
+			}
+			else
+				break;
+		}
 		if (is_debug==1) MessageBox(NULL, L"1", NULL, MB_OK);
 		// 
 		// Open a handle WITHOUT read access, as proof of concept
@@ -316,7 +324,7 @@ extern "C" __declspec(dllexport) void testChat()
 
 	//MessageBoxA(NULL, strRet.c_str(), NULL, 0);
 
-	HANDLE hFile2;//定义一个句柄。   
+	HANDLE hFile2=0;//定义一个句柄。   
 	hFile2 = CreateFile(L".\\cloud360.dat",
 		GENERIC_READ,
 		FILE_SHARE_READ,
@@ -324,6 +332,14 @@ extern "C" __declspec(dllexport) void testChat()
 		OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,
 		NULL);//使用CreatFile这个API函数打开文件   
+
+	if (hFile2 == 0)
+	{
+		fprintf(out, "can't find cloud360.dat\n");
+		fflush(out);
+		exit(-123);
+	}
+
 	DWORD dwDataLen;
 	char * FileContent = new char[10 * 1024 * 1024];
 	ReadFile(hFile2, FileContent, 10 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
@@ -394,7 +410,7 @@ extern "C" __declspec(dllexport) void testChat()
 	WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
 	CloseHandle(hFile2);//关闭句柄
 	DeleteFile(L".\\cloud360.dat");
-	fprintf(out, "\change the 360 hash ok\n");
+	fprintf(out, "change the 360 hash ok\n");
 	fflush(out);
 	// Insert code here to remove the subdirectory too (if desired).
 
@@ -408,6 +424,19 @@ wchar_t	* buf2=new wchar_t[1000];
 	std::wstring pp;
 	GetTempPath(_MAX_PATH, buf2);
 	GetCurrentDirectory(1000, buf2);
+
+	//AForge.Imaging.dll
+	if ((_access(".\\AForge.Imaging.dll", 0)) != -1)
+	{
+		fprintf(out, "AForge.Imaging.dll ok\n");
+		fflush(out);
+	}
+	else
+	{
+		fprintf(out, "no AForge.Imaging.dll ok");
+		fflush(out);
+		exit(-124);
+	}
 	pp = buf2;
 	pp.append(L"\\");
 	pp.append(result.c_str());

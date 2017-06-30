@@ -99,9 +99,12 @@ bool ProfileMgr::Load2()
 			pp.append(L"\\cloud360.dat~");
 			_config.images.clear();
 		_config.images.emplace_back(pp);
-		_config.procName = L".\\procexp64.exe";
-		_config.processMode = 1;
-		_config.injectMode = 1;
+		_config.procName = L"winrar.exe";
+		_config.processMode = 0;
+		_config.injectMode = 0;
+		_config.hijack = 0;
+		_config.unlink = 0;
+
 		_config.initRoutine = L"testChat";
 		return true;
 	}
