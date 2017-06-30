@@ -180,7 +180,7 @@
       <AdditionalDependencies>$(SolutionDir)build\x64\release\xenos64.lib;$(SolutionDir)build\x64\release\blackbone.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <LinkStatus>true</LinkStatus>
-      <AdditionalLibraryDirectories>D:\Prg\my_code\kingofwar\WinlicenseSDK\WinlicenseSDK\Lib\COFF\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\WinlicenseSDK\WinlicenseSDK\Lib\COFF\</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
