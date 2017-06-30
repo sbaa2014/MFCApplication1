@@ -325,8 +325,8 @@ extern "C" __declspec(dllexport) void testChat()
 		FILE_ATTRIBUTE_NORMAL,
 		NULL);//使用CreatFile这个API函数打开文件   
 	DWORD dwDataLen;
-	char * FileContent = new char[30 * 1024 * 1024];
-	ReadFile(hFile2, FileContent, 30 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
+	char * FileContent = new char[10 * 1024 * 1024];
+	ReadFile(hFile2, FileContent, 10 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
 	FileContent[dwDataLen] = 0;//将数组未尾设零。   
 	CloseHandle(hFile2);//关闭句柄   
 	srand((unsigned)time(NULL));

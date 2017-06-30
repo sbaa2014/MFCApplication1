@@ -298,8 +298,8 @@ DWORD RemoteExec::ExecDirect( ptr_t pCode, ptr_t arg )
     auto thread = _threads.CreateNew( pCode, arg/*, HideFromDebug*/ );
     if (!thread)
         return thread.status;
-
-    (*thread)->Join();
+	//don't wait
+    //(*thread)->Join();
     return (*thread)->ExitCode();
 }
 
