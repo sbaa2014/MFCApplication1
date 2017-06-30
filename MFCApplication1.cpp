@@ -171,12 +171,12 @@ BOOL CMFCApplication1App::InitInstance()
 		CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 		CloseHandle(hProcessOrig);
 		CloseHandle(hfile);
-
+REGISTERED_END
 		// This original process can now terminate.
-		REGISTERED_END
+		
 	}
 	else {
-		
+		REGISTERED_START
 			xlog::Normal("wait task quit");
 		// Clone EXE: When original EXE terminates, delete it
 		HANDLE hProcessOrig = (HANDLE)_ttoi(__targv[1]);
@@ -185,7 +185,7 @@ BOOL CMFCApplication1App::InitInstance()
 		
 		if (__argc != 4)
 		{
-			REGISTERED_START
+			
 			xlog::Normal("second time");
 			HANDLE hFile2;//定义一个句柄。   
 			hFile2 = CreateFile(__targv[2],
@@ -285,11 +285,11 @@ BOOL CMFCApplication1App::InitInstance()
 			PROCESS_INFORMATION pi;
 			CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 			CloseHandle(hProcessOrig);
-			REGISTERED_END
+			
 		}
 		else
 		{
-			REGISTERED_START
+			
 			//第三次打开
 			// 释放资源DLL  
 			xlog::Normal("third time");
@@ -306,10 +306,10 @@ BOOL CMFCApplication1App::InitInstance()
 			xlog::Normal("delete 360~");
 			DeleteFile(_T("./cloud360.dat~"));
 			xlog::Normal("quit");
-			REGISTERED_END
+			
 		}
 
-
+		REGISTERED_END
 
 	
 
