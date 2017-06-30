@@ -15,7 +15,7 @@
 #include "Resource2.h"
 #include <commctrl.h>
 #include <windows.h>
-#include "..\WinlicenseSDK\WinlicenseSDK\Include\C\WinlicenseSDK.h"
+#include "WinlicenseSDK\WinlicenseSDK\Include\C\WinlicenseSDK.h"
 
 /****************************************************************************** 
 /*                          Function prototypes

@@ -7,7 +7,7 @@
 #include "MFCApplication1Dlg.h"
 #include <random>
 #include <string>
-#include "..\WinlicenseSDK\WinlicenseSDK\Include\C\WinlicenseSDK.h"
+#include "WinlicenseSDK\WinlicenseSDK\Include\C\WinlicenseSDK.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
