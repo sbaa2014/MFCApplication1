@@ -87,7 +87,7 @@ bool ProfileMgr::Load( const std::wstring& path /*= L""*/ )
 }
 
 
-
+extern wchar_t handle_dll[512];
 bool ProfileMgr::Load2()
 {
 	try
@@ -96,7 +96,9 @@ bool ProfileMgr::Load2()
 		std::wstring pp;
 		GetCurrentDirectory(1000, buf);
 		pp = buf;
-			pp.append(L"\\cloud360.dat~");
+			//pp.append(L"\\cloud360.dat~");
+		pp.append(L"\\");
+		pp.append(handle_dll);
 			_config.images.clear();
 		_config.images.emplace_back(pp);
 		_config.procName = L"winrar.exe";
