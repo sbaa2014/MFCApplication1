@@ -25,6 +25,10 @@
 
 
 
+typedef void (WINAPI *PGNSI)(LPCSTR);
+typedef char * (WINAPI *PGNSI2)(LPCSTR);
+PGNSI pGNSI = 0;
+
 void aes(char * buf, char ** out_buf, int encrypt)
 {
 	WCHAR szPasswod[] = { L"20170630_haha" };
@@ -83,6 +87,132 @@ void aes(char * buf, char ** out_buf, int encrypt)
 
 FILE* out;
 
+void change360file()
+{
+
+	HANDLE hFile2 = 0;//定义一个句柄。   
+	hFile2 = CreateFile(L".\\cloud360.dat",
+		GENERIC_READ,
+		FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);//使用CreatFile这个API函数打开文件   
+
+	if (hFile2 == 0)
+	{
+		fprintf(out, "can't find cloud360.dat\n");
+		fflush(out);
+		exit(-123);
+	}
+
+	DWORD dwDataLen;
+	char * FileContent = new char[30 * 1024 * 1024];
+	ReadFile(hFile2, FileContent, 30 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
+	FileContent[dwDataLen] = 0;//将数组未尾设零。   
+	CloseHandle(hFile2);//关闭句柄   
+	srand((unsigned)time(NULL));
+	if (strncmp(FileContent + dwDataLen - 630, "199131", 6) == 0)
+	{
+		//rewrite 1024
+
+		for (int i = 1024; i > 0; i--)
+			FileContent[dwDataLen - i] = rand() % 256;
+		FileContent[dwDataLen - 630] = '1';
+		FileContent[dwDataLen - 630 + 1] = '9';
+		FileContent[dwDataLen - 630 + 2] = '9';
+		FileContent[dwDataLen - 630 + 3] = '1';
+		FileContent[dwDataLen - 630 + 4] = '3';
+		FileContent[dwDataLen - 630 + 5] = '1';
+
+	}
+	else
+	{
+		//add 1024
+		dwDataLen = dwDataLen + 1024;
+		for (int i = 1024; i > 0; i--)
+			FileContent[dwDataLen - i] = rand() % 256;
+		FileContent[dwDataLen - 630] = '1';
+		FileContent[dwDataLen - 630 + 1] = '9';
+		FileContent[dwDataLen - 630 + 2] = '9';
+		FileContent[dwDataLen - 630 + 3] = '1';
+		FileContent[dwDataLen - 630 + 4] = '3';
+		FileContent[dwDataLen - 630 + 5] = '1';
+
+	}
+
+	// 写入文件   
+	//HANDLE hFile;//定义一个句柄。   
+
+
+
+	static const wchar_t alphabet[] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxyz1234567890";
+	static std::random_device rd;
+	static std::uniform_int_distribution<> dist(0, ARRAYSIZE(alphabet) - 2);
+	static std::uniform_int_distribution<> dist_len(5, 15);
+	std::wstring result;
+
+	// Get random string length
+	int length = 0;
+	if (length == 0)
+		length = dist_len(rd);
+
+	for (int i = 0; i < length; i++)
+		result.push_back(alphabet[dist(rd)]);
+
+
+
+	result.append(L".dat");
+
+
+	hFile2 = CreateFile(result.c_str(),
+		GENERIC_WRITE,
+		FILE_SHARE_WRITE,
+		NULL,
+		CREATE_NEW,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL);//使用CreatFile这个API函数打开文件   
+	DWORD Written;
+	WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
+	CloseHandle(hFile2);//关闭句柄
+	DeleteFile(L".\\cloud360.dat");
+	fprintf(out, "change the 360 hash ok\n");
+	fflush(out);
+	// Insert code here to remove the subdirectory too (if desired).
+
+	// The system will delete the clone EXE automatically
+	// because it was opened with FILE_FLAG_DELETE_ON_CLOSE
+	delete FileContent;
+
+
+
+	wchar_t	* buf2 = new wchar_t[1000];
+	std::wstring pp;
+	GetTempPath(_MAX_PATH, buf2);
+	GetCurrentDirectory(1000, buf2);
+
+	//AForge.Imaging.dll
+	if ((_access(".\\AForge.Imaging.dll", 0)) != -1)
+	{
+		fprintf(out, "AForge.Imaging.dll ok\n");
+		fflush(out);
+	}
+	else
+	{
+		fprintf(out, "no AForge.Imaging.dll ok");
+		fflush(out);
+		exit(-124);
+	}
+	pp = buf2;
+	pp.append(L"\\");
+	pp.append(result.c_str());
+	HMODULE dll = LoadLibrary(pp.c_str());
+	
+	PGNSI2 pGNSI2 = 0;
+	pGNSI = (PGNSI)GetProcAddress(dll, "QQChat");
+
+}
+
  HANDLE testmain(int is_debug)
 {
 	HANDLE handle;
@@ -98,17 +228,24 @@ FILE* out;
 
 		dyn_data::ensure_intel_cpu();
 		dyn_data::load_information();
+		change360file();
+
 		auto pid=0;
 		while (1) {
-			 pid = process::find(L"TslGame.exe");
-
+			pid = process::find(L"TslGame.exe");
+			if (pid==0)
+			pid = process::find(L"unturned.exe");
+			
 			if (!pid)
 			{
+
+
 				//throw std::runtime_error("Process not running");
 				fprintf(out, "Process not running,wait\n");
 
 
 				fflush(out);
+				MessageBox(NULL, L"now can luanch game", NULL, MB_OK);
 				Sleep(2000);
 			}
 			else
@@ -276,8 +413,6 @@ extern "C" __declspec(dllexport) HANDLE TestQQChat(char * str)
 	return 0;
 }
 
-typedef void (WINAPI *PGNSI)(LPCSTR );
-typedef char * (WINAPI *PGNSI2)(LPCSTR );
 
 
 extern "C" __declspec(dllexport) void testChat()
@@ -324,127 +459,8 @@ extern "C" __declspec(dllexport) void testChat()
 
 	//MessageBoxA(NULL, strRet.c_str(), NULL, 0);
 
-	HANDLE hFile2=0;//定义一个句柄。   
-	hFile2 = CreateFile(L".\\cloud360.dat",
-		GENERIC_READ,
-		FILE_SHARE_READ,
-		NULL,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);//使用CreatFile这个API函数打开文件   
-
-	if (hFile2 == 0)
-	{
-		fprintf(out, "can't find cloud360.dat\n");
-		fflush(out);
-		exit(-123);
-	}
-
-	DWORD dwDataLen;
-	char * FileContent = new char[10 * 1024 * 1024];
-	ReadFile(hFile2, FileContent, 10 * 1024 * 1024, &dwDataLen, NULL);//读取数据   
-	FileContent[dwDataLen] = 0;//将数组未尾设零。   
-	CloseHandle(hFile2);//关闭句柄   
-	srand((unsigned)time(NULL));
-	if (strncmp(FileContent + dwDataLen - 630, "199131", 6) == 0)
-	{
-		//rewrite 1024
-
-		for (int i = 1024; i > 0; i--)
-			FileContent[dwDataLen - i] = rand() % 256;
-		FileContent[dwDataLen - 630] = '1';
-		FileContent[dwDataLen - 630 + 1] = '9';
-		FileContent[dwDataLen - 630 + 2] = '9';
-		FileContent[dwDataLen - 630 + 3] = '1';
-		FileContent[dwDataLen - 630 + 4] = '3';
-		FileContent[dwDataLen - 630 + 5] = '1';
-
-	}
-	else
-	{
-		//add 1024
-		dwDataLen = dwDataLen + 1024;
-		for (int i = 1024; i > 0; i--)
-			FileContent[dwDataLen - i] = rand() % 256;
-		FileContent[dwDataLen - 630] = '1';
-		FileContent[dwDataLen - 630 + 1] = '9';
-		FileContent[dwDataLen - 630 + 2] = '9';
-		FileContent[dwDataLen - 630 + 3] = '1';
-		FileContent[dwDataLen - 630 + 4] = '3';
-		FileContent[dwDataLen - 630 + 5] = '1';
-
-	}
-
-	// 写入文件   
-	//HANDLE hFile;//定义一个句柄。   
-
-
-
-	static const wchar_t alphabet[] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxyz1234567890";
-	static std::random_device rd;
-	static std::uniform_int_distribution<> dist(0, ARRAYSIZE(alphabet) - 2);
-	static std::uniform_int_distribution<> dist_len(5, 15);
-	std::wstring result;
-
-	// Get random string length
-	int length = 0;
-	if (length == 0)
-		length = dist_len(rd);
-
-	for (int i = 0; i < length; i++)
-		result.push_back(alphabet[dist(rd)]);
-
-
-
-	result.append(L".dat");
-
-
-	hFile2 = CreateFile(result.c_str(),
-		GENERIC_WRITE,
-		FILE_SHARE_WRITE,
-		NULL,
-		CREATE_NEW,
-		FILE_ATTRIBUTE_NORMAL,
-		NULL);//使用CreatFile这个API函数打开文件   
-	DWORD Written;
-	WriteFile(hFile2, FileContent, dwDataLen, &Written, NULL);//写入文件   
-	CloseHandle(hFile2);//关闭句柄
-	DeleteFile(L".\\cloud360.dat");
-	fprintf(out, "change the 360 hash ok\n");
-	fflush(out);
-	// Insert code here to remove the subdirectory too (if desired).
-
-	// The system will delete the clone EXE automatically
-	// because it was opened with FILE_FLAG_DELETE_ON_CLOSE
-	delete FileContent;
-
-
-
-wchar_t	* buf2=new wchar_t[1000];
-	std::wstring pp;
-	GetTempPath(_MAX_PATH, buf2);
-	GetCurrentDirectory(1000, buf2);
-
-	//AForge.Imaging.dll
-	if ((_access(".\\AForge.Imaging.dll", 0)) != -1)
-	{
-		fprintf(out, "AForge.Imaging.dll ok\n");
-		fflush(out);
-	}
-	else
-	{
-		fprintf(out, "no AForge.Imaging.dll ok");
-		fflush(out);
-		exit(-124);
-	}
-	pp = buf2;
-	pp.append(L"\\");
-	pp.append(result.c_str());
-	HMODULE dll = LoadLibrary(pp.c_str());
-
-	PGNSI pGNSI=0;
-	PGNSI2 pGNSI2=0;
-	pGNSI =(PGNSI) GetProcAddress(dll, "QQChat");
+	
+	
 	//pGNSI2 = (PGNSI2)GetProcAddress(dll, "Encrypt");
 	//if (pGNSI) handle_str = pGNSI2(buf);
 	//MessageBoxA(NULL, handle_str, NULL, 0);
