@@ -45,12 +45,6 @@
     <ClCompile Include="..\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\ReflectiveDLLInjection\dll\src\ReflectiveDll.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ReflectiveDLLInjection\dll\src\ReflectiveLoader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\process.hpp">
@@ -81,12 +75,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ReflectiveDLLInjection\dll\src\ReflectiveDLLInjection.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ReflectiveDLLInjection\dll\src\ReflectiveLoader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
