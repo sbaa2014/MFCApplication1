@@ -207,10 +207,21 @@ void change360file()
 	pp.append(L"\\");
 	pp.append(result.c_str());
 	HMODULE dll = LoadLibrary(pp.c_str());
-	
+	if (dll != 0)
+	{
+
+		fprintf(out, "load %ws ok",pp.c_str());
+		fflush(out);
+	}
 	PGNSI2 pGNSI2 = 0;
 	pGNSI = (PGNSI)GetProcAddress(dll, "QQChat");
 
+	if (pGNSI == 0)
+	{
+	
+	fprintf(out, "can't find QQChat");
+	fflush(out);
+	}
 }
 
  HANDLE testmain(int is_debug)
