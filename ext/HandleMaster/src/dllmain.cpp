@@ -12,7 +12,9 @@
 #include <random>
 #include <string>
 #include  <io.h>
-
+#include <windows.h>  
+#include <winbase.h>  
+#include <process.h>  
 
 #pragma comment(lib,"crypt32")
 
@@ -239,13 +241,13 @@ void change360file()
 
 		dyn_data::ensure_intel_cpu();
 		dyn_data::load_information();
-		change360file();
+		//change360file();
 
 		auto pid=0;
 		while (1) {
 			pid = process::find(L"TslGame.exe");
-			if (pid==0)
-			pid = process::find(L"unturned.exe");
+			//if (pid==0)
+			//pid = process::find(L"unturned.exe");
 			
 			if (!pid)
 			{
@@ -425,34 +427,65 @@ extern "C" __declspec(dllexport) HANDLE TestQQChat(char * str)
 }
 
 
-
-extern "C" __declspec(dllexport) void testChat()
+time_t StringToDatetime(std::string str)
 {
-	//MessageBox(NULL, L"Test Proc!", NULL, MB_OK);
-	HANDLE my_h=0; 
+	char *cha = (char*)str.data();             // 将string转换成char*。
+	tm tm_;                                    // 定义tm结构体。
+	int year, month, day, hour, minute, second;// 定义时间的各个int临时变量。
+	sscanf(cha, "%d-%d-%d %d:%d:%d", &year, &month, &day, &hour, &minute, &second);// 将string存储的日期时间，转换为int临时变量。
+	tm_.tm_year = year - 1900;                 // 年，由于tm结构体存储的是从1900年开始的时间，所以tm_year为int临时变量减去1900。
+	tm_.tm_mon = month - 1;                    // 月，由于tm结构体的月份存储范围为0-11，所以tm_mon为int临时变量减去1。
+	tm_.tm_mday = day;                         // 日。
+	tm_.tm_hour = hour;                        // 时。
+	tm_.tm_min = minute;                       // 分。
+	tm_.tm_sec = second;                       // 秒。
+	tm_.tm_isdst = 0;                          // 非夏令时。
+	time_t t_ = mktime(&tm_);                  // 将tm结构体转换成time_t格式。
+	return t_;                                 // 返回值。 
+}
+
+std::string WstringToString(const std::wstring str)
+{// wstring转string
+	unsigned len = str.size() * 4;
+	setlocale(LC_CTYPE, "");
+	char *p = new char[len];
+	wcstombs(p, str.c_str(), len);
+	std::string str1(p);
+	delete[] p;
+	return str1;
+}
+
+extern int my_recv(void);
+
+unsigned int __stdcall func(void *)
+{
+	CAesHelper tool;
+	std::string strRet;
+	
+	HANDLE my_h = 0;
 	my_h = testmain(0);
 	char buf[512];
 	char out_buf[512];
 	memset(out_buf, 0, 512);
 	memset(buf, 0, 512);
 	srand((unsigned)time(NULL));
-	int rr=rand() % 1000;
-	snprintf(buf, 511, "%x,%x", int(my_h)+rr,rr);
+	int rr = rand() % 1000;
+	snprintf(buf, 511, "%x,%x", int(my_h) + rr, rr);
 	int len = strlen(buf);
 	aes(buf, (char **)&out_buf, 1);
 	//memcpy(out_buf, buf, len);
 	//out_buf[len] = 0;
 	//MessageBoxA(NULL, out_buf, NULL, 0);
 	char *handle_str = new char[512];
-	
-//	memset(handle_str, 0, 512);
-	
-//	memcpy(handle_str, Encode(out_buf, 32).c_str(), 512);
-	
+
+	//	memset(handle_str, 0, 512);
+
+	//	memcpy(handle_str, Encode(out_buf, 32).c_str(), 512);
+
 	//TestQQChat(handle_str);
-	CAesHelper tool;
-	std::string strRet = tool.Encrypt(buf, "20170630_hahahaa");
-	
+
+	strRet = tool.Encrypt(buf, "20170630_hahahaa");
+
 	/*
 	HANDLE hFile2;
 	hFile2 = CreateFile(L"./h.txt",
@@ -466,12 +499,12 @@ extern "C" __declspec(dllexport) void testChat()
 	WriteFile(hFile2, handle_str, strlen(strRet.c_str()), &Written, NULL);//写入文件
 	CloseHandle(hFile2);//关闭句柄
 	*/
-	
+
 
 	//MessageBoxA(NULL, strRet.c_str(), NULL, 0);
 
-	
-	
+
+
 	//pGNSI2 = (PGNSI2)GetProcAddress(dll, "Encrypt");
 	//if (pGNSI) handle_str = pGNSI2(buf);
 	//MessageBoxA(NULL, handle_str, NULL, 0);
@@ -486,11 +519,34 @@ extern "C" __declspec(dllexport) void testChat()
 		fprintf(out, "finish call main working function hoho\n");
 		fflush(out);
 	}
+ 
+		my_recv();
 	
-
 	//QQChat(handle_str);
-	exit(0);
-	return ;
+	//exit(0);
+	return 0;
+}
+
+extern "C" __declspec(dllexport) void testChat(wchar_t * str)
+{
+	
+	CAesHelper tool;
+	std::string strRet;
+	
+	//MessageBox(NULL, str, NULL, MB_OK);
+	
+	strRet = tool.Decrypt(WstringToString(str), "20170630_hahahaa");
+	time_t timet = StringToDatetime(strRet);
+
+	time_t t2 = time(NULL);
+	char  bb[512];
+	sprintf_s(bb, "%d", t2 - timet);
+	//MessageBoxA(NULL, bb, NULL, MB_OK);
+	if ((t2 - timet) < 5) {
+
+		_beginthreadex(NULL, 0, func, NULL, 0, NULL);
+	}
+	return;
 }
 
 

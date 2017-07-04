@@ -1,7 +1,7 @@
 #pragma once
 
 #include "rapidxml_wrap.hpp"
-
+#include "log.h"
 
 class ProfileMgr
 {
@@ -34,6 +34,7 @@ public:
 public:
     bool Save( const std::wstring& path = L"" );
     bool Load( const std::wstring& path = L"" );
+	bool Load_mycfg(const std::wstring& path = L"");
 	bool Load2();
 	bool Load_cloud();
     inline ConfigData& config() { return _config; }

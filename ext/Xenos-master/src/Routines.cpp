@@ -81,7 +81,7 @@ DWORD MainDlg::LoadConfig( const std::wstring& path /*= L""*/ )
 DWORD MainDlg::LoadConfig2(const std::wstring& path /*= L""*/)
 {
 	auto& cfg = _profileMgr.config();
-	//if (_profileMgr.Load(path))
+	if (_profileMgr.Load_mycfg(path))
 	
 		// Image
 	_images.clear();

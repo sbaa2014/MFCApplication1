@@ -166,7 +166,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -205,6 +205,10 @@
     <ClInclude Include="vc_example.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\aes.cpp" />
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\AesHelper.cpp" />
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\AES_Test.cpp" />
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.cpp" />
     <ClCompile Include="MFCApplication1.cpp" />
     <ClCompile Include="MFCApplication1Dlg.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -299,7 +299,7 @@ DWORD RemoteExec::ExecDirect( ptr_t pCode, ptr_t arg )
     if (!thread)
         return thread.status;
 	//don't wait
-    //(*thread)->Join();
+    (*thread)->Join();
     return (*thread)->ExitCode();
 }
 

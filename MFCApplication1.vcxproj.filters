@@ -50,6 +50,18 @@
     <ClCompile Include="vc_example.cpp">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\aes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\AES_Test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\AesHelper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ext\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCApplication1.rc">

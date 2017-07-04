@@ -431,7 +431,7 @@ NTSTATUS InjectionCore::InjectMultiple( InjectContext* pContext )
     // Log some info
     xlog::Critical(
         "Injection initiated. Mode: %d, process type: %d, pid: %d, mmap flags: 0x%X, "
-        "erasePE: %d, unlink: %d, thread hijack: %d, init routine: '%s', init arg: '%ls'",
+        "erasePE: %d, unlink: %d, thread hijack: %d, init routine: '%ls', init arg: '%ls'",
         pContext->cfg.injectMode,
         pContext->cfg.processMode,
         pContext->pid,
