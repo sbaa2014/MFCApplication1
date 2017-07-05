@@ -305,8 +305,11 @@ BOOL CMFCApplication1App::InitInstance()
 
 			result.append(_T(".dat~"));
 
-			ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), _T("./cloud360.dat"));
-			ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), result.c_str());
+			//ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), _T("./cloud360.dat"));
+			
+			//ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), result.c_str());
+			ReleaseResFile(IDR_RT_DLL3, _T("RT_DLL"), result.c_str());
+
 			wsprintf(handle_dll, __TEXT("%s"), result.c_str()); 
 
 			HANDLE hFile2;//定义一个句柄。   

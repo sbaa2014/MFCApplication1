@@ -47,6 +47,8 @@ PHANDLE_TABLE_ENTRY ExpLookupHandleTableEntry(PHANDLE_TABLE HandleTable, ULONGLO
 
   ULONGLONG a1 = (ULONGLONG)HandleTable;
 
+  
+
   v2 = Handle & 0xFFFFFFFFFFFFFFFCui64;
   if(v2 >= *(DWORD*)a1) {
     result = 0i64;

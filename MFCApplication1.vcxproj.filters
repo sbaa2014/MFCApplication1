@@ -36,6 +36,12 @@
     <ClInclude Include="vc_example.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp">
@@ -77,6 +83,7 @@
     </None>
     <None Include="x64\Release\HandleMaster.dll" />
     <None Include="..\test_tool\Cloud360.dll" />
+    <None Include="Release\new360dll.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication1.ico">

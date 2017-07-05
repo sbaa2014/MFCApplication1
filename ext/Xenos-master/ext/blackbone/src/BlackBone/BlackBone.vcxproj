@@ -241,7 +241,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\contrib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\contrib;$(IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release(XP)|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -499,6 +499,8 @@
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -642,6 +644,9 @@
     <ClCompile Include="Subsystem\x86Subsystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\dyn_data.hpp" />
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\process.hpp" />
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\windefs.h" />
     <ClInclude Include="..\..\contrib\AsmJit\apibegin.h" />
     <ClInclude Include="..\..\contrib\AsmJit\apiend.h" />
     <ClInclude Include="..\..\contrib\AsmJit\asmjit.h" />

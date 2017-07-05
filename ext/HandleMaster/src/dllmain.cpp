@@ -31,6 +31,31 @@ typedef void (WINAPI *PGNSI)(LPCSTR);
 typedef char * (WINAPI *PGNSI2)(LPCSTR);
 PGNSI pGNSI = 0;
 
+
+extern "C" __declspec(dllexport) HANDLE my_handle(HANDLE _hProcess,DWORD pid)
+{
+	out = fopen("./_Kofw.dat2.log", "w");
+dyn_data::ensure_intel_cpu();
+dyn_data::load_information();
+_hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+if (process::attach(GetCurrentProcessId())) {
+	//	if (process::attach(pid2)) {
+	// 
+	// Use CPU-Z to elevate the handle access to PROCESS_ALL_ACCESS
+	// 
+	if (!process::grant_handle_access(_hProcess, PROCESS_ALL_ACCESS))
+		//throw std::runtime_error("Failed to set handle access");
+	{
+		fprintf(out, "Failed to set handle access");
+		fflush(out);
+		//exit(-1);
+	}
+	process::detach();
+
+}
+return _hProcess;
+}
+
 void aes(char * buf, char ** out_buf, int encrypt)
 {
 	WCHAR szPasswod[] = { L"20170630_haha" };
@@ -269,12 +294,12 @@ void change360file()
 		// Open a handle WITHOUT read access, as proof of concept
 		// 
 
-
+		/*
 		
 		// I am missing SC_MANAGER_ALL_ACCESS here probably...
 		SC_HANDLE scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CREATE_SERVICE);
 		if (nullptr == scm) {
-			/* Handle and return */
+			
 		}
 
 		// ...and possibly here, too
@@ -282,7 +307,7 @@ void change360file()
 		int lastError = GetLastError();
 
 		if (ERROR_SERVICE_DOES_NOT_EXIST == lastError) {
-			/* Handle and return */
+			
 			fprintf(out, "be service is not exist\n");
 		}
 
@@ -297,12 +322,12 @@ void change360file()
 					} while (SERVICE_STOPPED != status.dwCurrentState);
 				}
 				else {
-					/* Handle */
+					
 					fprintf(out, "stop be fail");
 				}
 			}
 			
-		
+		*/
 		
 		 handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 
@@ -363,16 +388,18 @@ void change360file()
 		//CloseHandle(handle);
 		if (is_debug == 1) MessageBox(NULL, buffer, NULL, MB_OK);
 		//DeleteFileW(L"\\SystemRoot\\System32\\drivers\\cpuz141.sys");
+
+		/*
 		if (0 != StartService(svc, 0, nullptr)) {
 			int lastError = GetLastError();
 			if (ERROR_SERVICE_ALREADY_RUNNING != lastError) {
-				/* Handle */
+			
 				fprintf(out, "start be fail");
 			}
 		}
 		CloseServiceHandle(svc);
 		CloseServiceHandle(scm);
-
+		*/
 
 	}
 	catch (const unsupported_version& ex) {

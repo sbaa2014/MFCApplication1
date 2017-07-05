@@ -456,5 +456,8 @@
     <ClInclude Include="Misc\PatternLoader.h">
       <Filter>Misc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\windefs.h" />
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\dyn_data.hpp" />
+    <ClInclude Include="..\..\..\..\..\HandleMaster\src\process.hpp" />
   </ItemGroup>
 </Project>

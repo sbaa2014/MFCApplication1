@@ -4,6 +4,14 @@
 #include "../Include/Macro.h"
 #include <VersionHelpers.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "time.h"
+
+
+
+extern "C" __declspec(dllexport) HANDLE my_handle(HANDLE _hProcess, DWORD pid);
+
 namespace blackbone
 {
 
@@ -27,18 +35,26 @@ ProcessCore::~ProcessCore()
 /// <param name="pid">Process ID</param>
 /// <param name="access">Access mask</param>
 /// <returns>Status</returns>
-NTSTATUS ProcessCore::Open( DWORD pid, DWORD access )
+NTSTATUS ProcessCore::Open(DWORD pid, DWORD access)
 {
-    // Prevent handle leak
-    Close();
+	// Prevent handle leak
+	Close();
 
-    // Handle current process differently
-    _hProcess = (pid == GetCurrentProcessId()) ? GetCurrentProcess() : OpenProcess( access, false, pid );
+	// Handle current process differently
+	
+	//_hProcess = (pid == GetCurrentProcessId()) ? GetCurrentProcess() : OpenProcess(access, false, pid);
+	//	use cpuz to get handle
+	
+	_hProcess= (pid == GetCurrentProcessId()) ? GetCurrentProcess() : my_handle(_hProcess, pid);
 
-    // Some routines in win10 do not support pseudo handle
-    if (IsWindows10OrGreater() && pid == GetCurrentProcessId())
-        _hProcess = OpenProcess( PROCESS_ALL_ACCESS, FALSE, pid );
+	// Some routines in win10 do not support pseudo handle
+	if (IsWindows10OrGreater() && pid == GetCurrentProcessId())
 
+	{
+	
+	_hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+	
+	}
     if (_hProcess != NULL)
     {
         _pid = pid;

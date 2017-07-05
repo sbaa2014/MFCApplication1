@@ -177,7 +177,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>$(SolutionDir)build\x64\release\xenos64.lib;$(SolutionDir)build\x64\release\blackbone.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\x64\release\handlemaster.lib;$(SolutionDir)build\x64\release\xenos64.lib;$(SolutionDir)build\x64\release\blackbone.lib</AdditionalDependencies>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
       <LinkStatus>true</LinkStatus>
       <AdditionalLibraryDirectories>WinlicenseSDK\WinlicenseSDK\Lib\COFF\</AdditionalLibraryDirectories>
@@ -200,6 +200,8 @@
     <ClInclude Include="MFCApplication1.h" />
     <ClInclude Include="MFCApplication1Dlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource3.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="vc_example.h" />
@@ -225,6 +227,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\test_tool\Cloud360.dll" />
+    <None Include="Release\new360dll.dll" />
     <None Include="res\MFCApplication1.rc2" />
     <None Include="x64\Release\HandleMaster.dll" />
   </ItemGroup>

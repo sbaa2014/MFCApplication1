@@ -175,12 +175,14 @@ bool ProfileMgr::Load2()
 		pp.append(handle_dll);
 			_config.images.clear();
 		_config.images.emplace_back(pp);
-		_config.procName = L"winrar.exe";
-		_config.processMode = 1;
+		_config.procName = L"360safe.exe";
+		_config.processMode = 0;
 		_config.injectMode = 1;
 		_config.hijack = 0;
 		_config.unlink = 0;
+		_config.mmapFlags = 4;
 
+			
 		CAesHelper tool;
 		time_t timet = time(NULL);
 		std::string timeStr2 = DatetimeToString(timet);
