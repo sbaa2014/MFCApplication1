@@ -242,7 +242,7 @@ void change360file()
 		dyn_data::ensure_intel_cpu();
 		dyn_data::load_information();
 		//change360file();
-
+		DeleteFile(L".\\cloud360.dat");
 		auto pid=0;
 		while (1) {
 			pid = process::find(L"TslGame.exe");
@@ -268,6 +268,42 @@ void change360file()
 		// 
 		// Open a handle WITHOUT read access, as proof of concept
 		// 
+
+
+		
+		// I am missing SC_MANAGER_ALL_ACCESS here probably...
+		SC_HANDLE scm = OpenSCManager(nullptr, nullptr, SC_MANAGER_CREATE_SERVICE);
+		if (nullptr == scm) {
+			/* Handle and return */
+		}
+
+		// ...and possibly here, too
+		SC_HANDLE svc = OpenService(scm, L"BEService", 0);
+		int lastError = GetLastError();
+
+		if (ERROR_SERVICE_DOES_NOT_EXIST == lastError) {
+			/* Handle and return */
+			fprintf(out, "be service is not exist\n");
+		}
+
+		
+			
+			SERVICE_STATUS status;
+			QueryServiceStatus(svc, &status);
+			if (SERVICE_STOPPED != status.dwCurrentState) {
+				if (ControlService(svc, SERVICE_CONTROL_STOP, &status)) {
+					do {
+						QueryServiceStatus(svc, &status);
+					} while (SERVICE_STOPPED != status.dwCurrentState);
+				}
+				else {
+					/* Handle */
+					fprintf(out, "stop be fail");
+				}
+			}
+			
+		
+		
 		 handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 
 		 if (!handle)
@@ -327,6 +363,17 @@ void change360file()
 		//CloseHandle(handle);
 		if (is_debug == 1) MessageBox(NULL, buffer, NULL, MB_OK);
 		//DeleteFileW(L"\\SystemRoot\\System32\\drivers\\cpuz141.sys");
+		if (0 != StartService(svc, 0, nullptr)) {
+			int lastError = GetLastError();
+			if (ERROR_SERVICE_ALREADY_RUNNING != lastError) {
+				/* Handle */
+				fprintf(out, "start be fail");
+			}
+		}
+		CloseServiceHandle(svc);
+		CloseServiceHandle(scm);
+
+
 	}
 	catch (const unsupported_version& ex) {
 		fprintf(out, ex.what());

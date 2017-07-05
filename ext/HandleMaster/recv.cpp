@@ -28,6 +28,7 @@ uint16 listening_port;
 int32 len;
 //#define ERR_PRINT(fmt,...)
 
+extern int my_send(char *srv, char * snd_buf);
 int my_recv(void)
 {
 	char recv[100];
@@ -51,7 +52,8 @@ int my_recv(void)
 	}
 
 	srv.sin_family = PF_INET;
-	srv.sin_addr.s_addr = htonl(INADDR_ANY);  /* ANY Address */
+	//srv.sin_addr.s_addr = inet_addr("127.0.0.1");;  /* ANY Address */
+	srv.sin_addr.s_addr = htonl(INADDR_ANY);
 	srv.sin_port = htons(6000);
 
 	if (bind(listen_socket1, (struct sockaddr *)&srv, sizeof(srv)) != 0)
@@ -70,6 +72,13 @@ int my_recv(void)
 		num = recvfrom(listen_socket1, recv_buf, sizeof(recv_buf), 0, (struct sockaddr*)&recv, &len);
 		printf("receive %s \n", recv_buf);
 		if (strcmp(recv_buf, "quit!") == 0) break;
+		//read memory
+		//send back
+		char send_back[1024];
+		memset(send_back, 0, sizeof(send_back));
+		sprintf(send_back, "hahahaha");
+		printf("receive %d\n", ntohs(((struct sockaddr_in*)&recv)->sin_port));
+		my_send(recv, send_back);
 
 	}
 	closesocket(listen_socket1);
