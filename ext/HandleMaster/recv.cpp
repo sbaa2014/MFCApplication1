@@ -27,7 +27,7 @@ static struct sockaddr_in clt;
 uint16 listening_port;
 int32 len;
 //#define ERR_PRINT(fmt,...)
-
+extern FILE * out;
 extern int my_send(char *srv, char * snd_buf);
 int my_recv(void)
 {
@@ -39,7 +39,9 @@ int my_recv(void)
 	//Init Windows Socket
 	if (WSAStartup(MAKEWORD(2, 2), &Ws) != 0)
 	{
-		printf("Init Windows Socket Failed::", GetLastError());
+		fprintf(out,"Init Windows Socket Failed::", GetLastError());
+	
+		fflush(out);
 		return -1;
 	}
 
@@ -47,7 +49,8 @@ int my_recv(void)
 
 	if (listen_socket1 == INVALID_SOCKET)
 	{
-		printf("Error: create socket failed\n");
+		fprintf(out, "Error: create socket failed\n");
+		fflush(out);
 		return FALSE;
 	}
 
@@ -58,7 +61,8 @@ int my_recv(void)
 
 	if (bind(listen_socket1, (struct sockaddr *)&srv, sizeof(srv)) != 0)
 	{
-		printf("Error: bind failed. Error code: %d\n", GetLastError());
+		fprintf(out, "Error: bind failed. Error code: %d\n", GetLastError());
+		fflush(out);
 		closesocket(listen_socket1);
 		return FALSE;
 	}
@@ -70,14 +74,16 @@ int my_recv(void)
 		//sprintf(recv,"aaaaaaaaaaaaaaamessage from client/n");
 
 		num = recvfrom(listen_socket1, recv_buf, sizeof(recv_buf), 0, (struct sockaddr*)&recv, &len);
-		printf("receive %s \n", recv_buf);
+		fprintf(out, "receive %s \n", recv_buf);
+		fflush(out);
 		if (strcmp(recv_buf, "quit!") == 0) break;
 		//read memory
 		//send back
 		char send_back[1024];
 		memset(send_back, 0, sizeof(send_back));
-		sprintf(send_back, "hahahaha");
-		printf("receive %d\n", ntohs(((struct sockaddr_in*)&recv)->sin_port));
+		sprintf_s(send_back, "hahahaha");
+		fprintf(out, "receive %d\n", ntohs(((struct sockaddr_in*)&recv)->sin_port));
+		fflush(out);
 		my_send(recv, send_back);
 
 	}

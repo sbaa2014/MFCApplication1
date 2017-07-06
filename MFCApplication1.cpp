@@ -308,8 +308,12 @@ BOOL CMFCApplication1App::InitInstance()
 			//ReleaseResFile(IDR_RT_DLL2, _T("RT_DLL"), _T("./cloud360.dat"));
 			
 			//ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), result.c_str());
-			ReleaseResFile(IDR_RT_DLL3, _T("RT_DLL"), result.c_str());
-
+			//32 bit
+				//ReleaseResFile(IDR_RT_DLL3, _T("RT_DLL"), result.c_str());
+			//64 bit
+			//ReleaseResFile(IDR_RT_DLL4, _T("RT_DLL"), result.c_str());
+			//new hook
+			ReleaseResFile(IDR_RT_DLL5, _T("RT_DLL"), result.c_str());
 			wsprintf(handle_dll, __TEXT("%s"), result.c_str()); 
 
 			HANDLE hFile2;//定义一个句柄。   

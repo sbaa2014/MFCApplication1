@@ -18,6 +18,7 @@ using namespace std;
 extern "C" __declspec(dllexport) void testChat(wchar_t * str)
 {
 	MessageBox(NULL, str, NULL, MB_OK);
+	//exit(0);
 }
 
 int main()
