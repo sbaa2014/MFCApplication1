@@ -535,7 +535,7 @@ std::string WstringToString(const std::wstring str)
 	return str1;
 }
 
-extern int my_recv(void);
+//extern int my_recv(void);
 
 unsigned int __stdcall func(void *)
 {
@@ -600,7 +600,7 @@ unsigned int __stdcall func(void *)
 		fflush(out);
 	}
  
-		my_recv();
+		//my_recv();
 	
 	//QQChat(handle_str);
 	//exit(0);

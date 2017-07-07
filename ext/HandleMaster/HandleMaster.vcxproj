@@ -14,7 +14,6 @@
     <ClCompile Include="..\AES_Test\AES_Test\AES_Test\AES_Test\aes.cpp" />
     <ClCompile Include="..\AES_Test\AES_Test\AES_Test\AES_Test\AesHelper.cpp" />
     <ClCompile Include="..\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.cpp" />
-    <ClCompile Include="recv.cpp" />
     <ClCompile Include="send.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\drivers\cpuz\cpuz_driver.cpp" />
