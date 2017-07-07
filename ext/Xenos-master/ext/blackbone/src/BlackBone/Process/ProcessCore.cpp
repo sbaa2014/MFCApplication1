@@ -42,12 +42,12 @@ NTSTATUS ProcessCore::Open(DWORD pid, DWORD access)
 
 	// Handle current process differently
 	
-	//_hProcess = (pid == GetCurrentProcessId()) ? GetCurrentProcess() : OpenProcess(access, false, pid);
-	//	use cpuz to get handle
+	_hProcess = (pid == GetCurrentProcessId()) ? GetCurrentProcess() : OpenProcess(access, false, pid);
 	
-	_hProcess= (pid == GetCurrentProcessId()) ? GetCurrentProcess() : my_handle(_hProcess, pid);
+	
 
 	// Some routines in win10 do not support pseudo handle
+	
 	if (IsWindows10OrGreater() && pid == GetCurrentProcessId())
 
 	{
@@ -55,6 +55,13 @@ NTSTATUS ProcessCore::Open(DWORD pid, DWORD access)
 	_hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 	
 	}
+	
+	//	use cpuz to get handle
+	if (LastNtStatus() != STATUS_SUCCESS)
+
+		_hProcess = (pid == GetCurrentProcessId()) ? GetCurrentProcess() : my_handle(_hProcess, pid);
+
+
     if (_hProcess != NULL)
     {
         _pid = pid;

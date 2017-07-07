@@ -16,7 +16,7 @@
 #include <process.h> 
 
 FILE* out;
-
+HANDLE game_handle = 0;
 static DWORD dwID=0;
 extern int my_recv(void);
 static HANDLE(WINAPI * TrueOpenProcess)(
@@ -32,11 +32,31 @@ HANDLE WINAPI myOpenProcessHook(
 ) {
 	HANDLE h;
 	if (dwProcessId == dwID) {
-		MessageBox(NULL, L"Hooked", L"h", MB_OK);
+		h = TrueOpenProcess(PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_QUERY_INFORMATION, bInheritHandle, dwProcessId);
+		WCHAR szBuffer[100];
+		//===============do what you want here===================
+		wsprintfW(szBuffer, L"Hooked Game Handle = %d", h);
+		MessageBox(NULL, szBuffer, L"hook", MB_OK);
+		//=======================================================
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
+		//unhook
+		DetourDetach(&(PVOID&)TrueOpenProcess, myOpenProcessHook);
+		DetourDetach(&(PVOID&)TrueOpenProcess, myOpenProcessHook);
+		DetourDetach(&(PVOID&)TrueOpenProcess, myOpenProcessHook);
+		DetourDetach(&(PVOID&)TrueOpenProcess, myOpenProcessHook);
+		DetourTransactionCommit();
+		game_handle = h;
+		fprintf(out, "get game process%d\n", h);
+		fflush(out);
 		h = 0;
 	}
 	else {
-		h = OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+		h = TrueOpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+		WCHAR szBuffer[100];
+		wsprintfW(szBuffer, L"Hooked Handle = %d", dwProcessId);
+		
+		//MessageBox(NULL, szBuffer, L"hook", MB_OK);	
 	}
 
 	return h;
@@ -54,23 +74,42 @@ extern "C" __declspec(dllexport) BOOL DeepScan() {
 	return 0;
 }
 
+bool GetPid() {
+	//bool ret = true;
+	HWND sa = FindWindowW(NULL, L"PLAYERUNKNOWN'S BATTLEGROUNDS ");
+	if (sa == NULL) {
+		return false;
+	}
+	GetWindowThreadProcessId(sa, &dwID);
+	if (dwID == NULL || dwID == 999999) {
+		return false;
+	}
+	/*WCHAR szBuffer[100];
+	wsprintfW(szBuffer, L"Game Pid = %d", dwID);
+	MessageBox(NULL, szBuffer, L"h", MB_OK);*/
+	return true;
+}
+
 unsigned int __stdcall func(void *)
 {
 	
-
-	while (dwID == 0) {
-		HWND sa = FindWindowW(NULL, L"PLAYERUNKNOWN'S BATTLEGROUNDS ");
-		GetWindowThreadProcessId(sa, &dwID);
-		Sleep(1000);
-		fprintf(out, "wait game process\n");
-		fflush(out);
-	}
-	fprintf(out, "find game process\n");
-	fflush(out);
+	DetourRestoreAfterWith();
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 	DetourAttach(&(PVOID&)TrueOpenProcess, myOpenProcessHook);
 	DetourTransactionCommit();
+
+	while (!GetPid()) {
+		Sleep(500);
+	}
+	WCHAR szBuffer[100];
+	wsprintfW(szBuffer, L"Game Pid = %d", dwID);
+	MessageBox(NULL, szBuffer, L"h", MB_OK);
+
+
+	fprintf(out, "find game process\n");
+	fflush(out);
+	
 	fprintf(out, "go recv\n");
 	fflush(out);
 	my_recv();

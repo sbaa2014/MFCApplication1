@@ -568,7 +568,7 @@ NTSTATUS InjectionCore::InjectSingle( InjectContext& context, blackbone::pe::PEI
                     auto flags = static_cast<blackbone::eLoadFlags>(context.cfg.mmapFlags);
                     if (img.isExe())
                         flags |= blackbone::RebaseProcess;
-
+					xlog::Error("before inject image using manual map");
                     auto injectedMod = _process.mmap().MapImage( img.path(), flags, modCallback );
                     if (!injectedMod)
                     {

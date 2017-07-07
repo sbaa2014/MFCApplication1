@@ -41,7 +41,7 @@ int my_send(char *srv,char * snd_buf)
 		return -1;
 	}
 
-	listen_socket = socket(PF_INET, SOCK_DGRAM, 0);
+	listen_socket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	if (listen_socket == INVALID_SOCKET)
 	{
@@ -52,8 +52,12 @@ int my_send(char *srv,char * snd_buf)
 
 	srv2.sin_family = AF_INET;
 	//srv2.sin_addr.s_addr = htonl( INADDR_ANY );  /* ANY Address 本机*/
-	srv2.sin_addr.s_addr = inet_addr("10.64.54.63");//虚拟机的IP
+	srv2.sin_addr.s_addr = inet_addr("127.0.0.1");//虚拟机的IP
 	srv2.sin_port = htons(6000);
+
+	bool isReuseaddr = TRUE;
+	//int ret = setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&isReuseaddr, 1);
+
 	//这里不需要绑定，不然绑定不成功，返回错误码10049
 	  if (bind( listen_socket, (struct sockaddr *)&srv2, sizeof(srv2)) != 0)
 	{
@@ -67,7 +71,8 @@ int my_send(char *srv,char * snd_buf)
 	//sprintf(snd_buf, "aaaaaaaaaaaaaaamessage from client/n");
 	//printf("send buf %s\n", snd_buf);
 	  fprintf(out, "send %s  %d %d characters\n", inet_ntoa(((struct sockaddr_in*)srv)->sin_addr), ntohs(((struct sockaddr_in*)srv)->sin_port), strlen(snd_buf));
-	num = sendto(listen_socket, snd_buf, 1024, 0, (struct sockaddr*)srv, sizeof(struct sockaddr));
+	  fflush(out);
+	  num = sendto(listen_socket, snd_buf, 1024, 0, (struct sockaddr*)srv, sizeof(struct sockaddr));
 	if (num == SOCKET_ERROR) {
 		fprintf(out, "Send Info Error %d", GetLastError());
 		fflush(out);

@@ -37,12 +37,18 @@ extern "C" __declspec(dllexport) HANDLE my_handle(HANDLE _hProcess,DWORD pid)
 	out = fopen("./_Kofw.dat2.log", "w");
 dyn_data::ensure_intel_cpu();
 dyn_data::load_information();
+fprintf(out, "open a query permission");
+fflush(out);
 _hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+fprintf(out, "open a query permission ok");
+fflush(out);
 if (process::attach(GetCurrentProcessId())) {
 	//	if (process::attach(pid2)) {
 	// 
 	// Use CPU-Z to elevate the handle access to PROCESS_ALL_ACCESS
 	// 
+	fprintf(out, "before grant permission");
+	fflush(out);
 	if (!process::grant_handle_access(_hProcess, PROCESS_ALL_ACCESS))
 		//throw std::runtime_error("Failed to set handle access");
 	{

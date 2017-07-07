@@ -91,6 +91,7 @@ bool cpuz_driver::is_loaded()
       } while(!NT_SUCCESS(status) && i--);
     }
 	fprintf(out, "get running driver \n");
+	fflush(out);
   }
   //fprintf(stderr, "driver is loaded\n");
   return deviceHandle_ && deviceHandle_ != INVALID_HANDLE_VALUE;
@@ -101,6 +102,7 @@ bool cpuz_driver::load()
   HANDLE service, file;
   ULONG io;
   fprintf(out, "create driver file \n");
+  fflush(out);
   if(!SupFileExists(CPUZ_FILE_NAME)) {
     file = SupCreateFile(CPUZ_FILE_NAME, FILE_GENERIC_WRITE, 0, FILE_CREATE);
 
@@ -111,6 +113,7 @@ bool cpuz_driver::load()
     CloseHandle(file);
   }
   fprintf(out, "stop driver \n");
+  fflush(out);
   
   if(ScmOpenServiceHandle(&service, L"cpuz141", SERVICE_STOP | DELETE)) {
     if(!ScmStopService(service) && GetLastError() != ERROR_SERVICE_NOT_ACTIVE) {
@@ -118,6 +121,7 @@ bool cpuz_driver::load()
       return false;
     }
 	fprintf(out, "delete driver \n");
+	fflush(out);
     if(!ScmDeleteService(service)) {
       ScmCloseServiceHandle(service);
       return false;
@@ -127,6 +131,7 @@ bool cpuz_driver::load()
   
  
   fprintf(out, "create driver \n");
+  fflush(out);
   if(!ScmCreateService(
     &serviceHandle_,
     L"cpuz141", L"cpuz141",
@@ -135,6 +140,7 @@ bool cpuz_driver::load()
     SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL))
     return false;
   fprintf(out, "start driver \n");
+  fflush(out);
 
   Sleep(1000);
   if(!ScmStartService(serviceHandle_)) {
@@ -152,12 +158,15 @@ bool cpuz_driver::unload()
 
   if(serviceHandle_ != INVALID_HANDLE_VALUE) {
 	  fprintf(out, "stop driver ? \n");
+	  fflush(out);
     if(!ScmStopService(serviceHandle_) && GetLastError() != ERROR_SERVICE_NOT_ACTIVE) {
       ScmCloseServiceHandle(serviceHandle_);
 	  fprintf(out, "stop driver error \n");
+	  fflush(out);
       return false;
     }
 	fprintf(out, "delete driver ? \n");
+	fflush(out);
     ScmDeleteService(serviceHandle_);
 	ScmCloseServiceHandle(serviceHandle_);
 
@@ -166,6 +175,7 @@ bool cpuz_driver::unload()
 		ScmStopService(service);
 			
 		fprintf(out, "delete driver \n");
+		fflush(out);
 		if (!ScmDeleteService(service)) {
 			//ScmCloseServiceHandle(service);
 		//	return false;
@@ -176,6 +186,7 @@ bool cpuz_driver::unload()
   Sleep(1000);
   DeleteFile(L"C:\\Windows\\System32\\drivers\\cpuz141.sys");
   fprintf(out, "delete driver file? \n");
+  fflush(out);
   return true;
 }
 

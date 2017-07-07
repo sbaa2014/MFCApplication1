@@ -2,6 +2,7 @@
 #include <winsock2.h>
 #pragma comment(lib, "wsock32.lib")
 
+
 typedef int   int32;
 typedef short int16;
 typedef char  int8;
@@ -29,6 +30,7 @@ int32 len;
 //#define ERR_PRINT(fmt,...)
 extern FILE * out;
 extern int my_send(char *srv, char * snd_buf);
+extern HANDLE game_handle;
 int my_recv(void)
 {
 	char recv[100];
@@ -45,7 +47,7 @@ int my_recv(void)
 		return -1;
 	}
 
-	listen_socket1 = socket(PF_INET, SOCK_DGRAM, 0);
+	listen_socket1 = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	if (listen_socket1 == INVALID_SOCKET)
 	{
@@ -55,7 +57,7 @@ int my_recv(void)
 	}
 
 	srv.sin_family = PF_INET;
-	//srv.sin_addr.s_addr = inet_addr("127.0.0.1");;  /* ANY Address */
+	//srv.sin_addr.s_addr = inet_addr("127.0.0.1");  /* ANY Address */
 	srv.sin_addr.s_addr = htonl(INADDR_ANY);
 	srv.sin_port = htons(6000);
 
@@ -77,11 +79,20 @@ int my_recv(void)
 		fprintf(out, "receive %s \n", recv_buf);
 		fflush(out);
 		if (strcmp(recv_buf, "quit!") == 0) break;
+		
+		LPCVOID lpBaseAddress;
+		LPVOID lpBuffer;
+		DWORD nSize;
+		LPDWORD lpNumberOfBytesRead;
+		sscanf(recv_buf, "%llx,%d", &lpBaseAddress,&nSize);
 		//read memory
 		//send back
 		char send_back[1024];
 		memset(send_back, 0, sizeof(send_back));
-		sprintf_s(send_back, "hahahaha");
+		ReadProcessMemory(game_handle,lpBaseAddress,send_back,nSize,0);
+
+		
+		//sprintf_s(send_back, "hahahaha");
 		fprintf(out, "receive %d\n", ntohs(((struct sockaddr_in*)&recv)->sin_port));
 		fflush(out);
 		my_send(recv, send_back);

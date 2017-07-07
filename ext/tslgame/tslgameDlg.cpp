@@ -438,7 +438,8 @@ void MyCloseHandle(DWORD pid)
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 #endif
 
-
+DWORD   WINAPI   NtQueryObject(HANDLE   handle, DWORD   nQueryIndex, VOID*   pOutBuffer, DWORD   cbInBufferSize, VOID*   cbOutBufferSize);
+/*
 HANDLE GetProcessKernelObject(DWORD ProcessId)
 {
 
@@ -488,7 +489,7 @@ HANDLE GetProcessKernelObject(DWORD ProcessId)
 	}
 	return NULL;
 }
-
+*/
 
 void CtslgameDlg::OnBnClickedOk()
 {
