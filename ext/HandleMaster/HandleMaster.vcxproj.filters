@@ -48,6 +48,15 @@
     <ClCompile Include="send.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteMemoryOps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\process.hpp">
@@ -79,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="..\AES_Test\AES_Test\AES_Test\AES_Test\zbase64.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteMemoryOps.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -660,7 +660,7 @@ void NTAPI MY_TLS_CALLBACK(PVOID DllHandle, DWORD Reason, PVOID Reserved)
 {
 	if (Reason == DLL_PROCESS_ATTACH)
 	{
-		MessageBox(NULL, L"TLSTest!", NULL, MB_OK);
+	//	MessageBox(NULL, L"TLSTest!", NULL, MB_OK);
 	}
 }
 

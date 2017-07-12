@@ -47,8 +47,8 @@ cpuz_driver::cpuz_driver()
 
 cpuz_driver::~cpuz_driver()
 {
-  if(deviceHandle_ != INVALID_HANDLE_VALUE)
-    NtClose(deviceHandle_);
+ // if(deviceHandle_ != INVALID_HANDLE_VALUE)
+ //   NtClose(deviceHandle_);
   
   if(unload_ && is_loaded())
     unload();
@@ -219,7 +219,7 @@ std::uint64_t cpuz_driver::read_cr3()
   auto io     = ULONG{ 0 };
   auto cr     = std::uint32_t{ 3 };
   auto value  = std::uint64_t{ 0 };
-  
+ 
   if(!DeviceIoControl(deviceHandle_, IOCTL_READ_CR, &cr, sizeof(cr), &value, sizeof(value), &io, nullptr))
     throw std::runtime_error("Failed to read control register");
 
