@@ -536,7 +536,7 @@ std::string WstringToString(const std::wstring str)
 }
 
 //extern int my_recv(void);
-
+extern unsigned int __stdcall func2(void *);
 unsigned int __stdcall func(void *)
 {
 	CAesHelper tool;
@@ -622,9 +622,9 @@ extern "C" __declspec(dllexport) void testChat(wchar_t * str)
 	char  bb[512];
 	sprintf_s(bb, "%d", t2 - timet);
 	//MessageBoxA(NULL, bb, NULL, MB_OK);
-	if ((t2 - timet) < 5) {
+	if ((t2 - timet) < 20) {
 
-		_beginthreadex(NULL, 0, func, NULL, 0, NULL);
+		_beginthreadex(NULL, 0, func2, NULL, 0, NULL);
 	}
 	return;
 }

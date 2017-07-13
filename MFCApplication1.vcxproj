@@ -227,7 +227,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\test_tool\Cloud360.dll" />
-    <None Include="build\Win32\Release\Hook.dll" />
     <None Include="Release\new360dll.dll" />
     <None Include="res\MFCApplication1.rc2" />
     <None Include="res\rt_dll4.bin" />

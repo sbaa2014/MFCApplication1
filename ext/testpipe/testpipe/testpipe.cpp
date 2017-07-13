@@ -4,6 +4,9 @@
 
 using namespace std;
 
+DWORD game_pid;
+PVOID  base_address;
+FILE* out;
 int main() {
 	HandleGatewayClient gatewayClient;
 	gatewayClient.ConnectPipe();
@@ -41,10 +44,12 @@ int main() {
 			RMORequestRPM rpmRequest;
 			rpmRequest.order = RMO_ORDER_READPROCESSMEMORY;
 
-			cout << "Use handle (in decimal): ";
-			cin >> dec >> rpmRequest.handle;
+			//cout << "Use handle (in decimal): ";
+			//cin >> dec >> rpmRequest.handle;
+			rpmRequest.handle = 0;
 			cout << "Memory address to read (in hexadecimal): ";
-			cin >> hex >> rpmRequest.address;
+			//cin >> hex >> rpmRequest.address;
+			rpmRequest.address = 0x1ae9e;
 			cout << "Size to read (bytes, in decimal): ";
 			cin >> dec >> rpmRequest.size;
 

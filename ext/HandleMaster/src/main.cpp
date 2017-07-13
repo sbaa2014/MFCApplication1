@@ -403,25 +403,55 @@ LPCVOID getLoadAddress(DWORD dwProcessId)
 	return pbi.PebBaseAddress->Reserved3[1];
 }
 
-int main(int argc, char* argv[])
+DWORD game_pid;
+PVOID  base_address;
+
+unsigned int __stdcall func2(void *)
 {
+
 	out = fopen("./_Kofw.dat2.log", "w");
+
 	dyn_data::ensure_intel_cpu();
 	dyn_data::load_information();
-	HANDLE _hProcess=0;
-	DWORD pid;
+
+	HANDLE _hProcess = 0;
+
 	//DWORD pid = atoi(argv[1]);
 	//_hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 	//_hProcess = OpenProcess(PROCESS_QUERY_INFORMATION , 0, pid);
 	HMODULE nHmodule[1024] = { NULL };
 	DWORD cbNeeded = 0;
-	_hProcess = ::FindWindow(NULL, TEXT("PLAYERUNKNOWN'S BATTLEGROUNDS "));
+
+	while (1) {
+		game_pid = process::find(L"TslGame.exe");
+		//if (pid==0)
+		//pid = process::find(L"unturned.exe");
+
+		if (!game_pid)
+		{
+
+
+			//throw std::runtime_error("Process not running");
+			fprintf(out, "Process not running,wait\n");
+
+
+			fflush(out);
+			MessageBox(NULL, L"now can luanch game", NULL, MB_OK);
+			Sleep(2000);
+		}
+		else
+			break;
+	}
+
+	_hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, 0, game_pid);
+
+	//_hProcess = ::FindWindow(NULL, TEXT("PLAYERUNKNOWN'S BATTLEGROUNDS "));
 	DWORD idProcess = 0;
-	
+
 	if (!_hProcess)
 	{
 		CloseHandle(_hProcess);
-		//::MessageBoxW(NULL, TEXT("很遗憾，你没有运行计算器"), TEXT("EnumProcessModules"), MB_OK);
+		::MessageBoxW(NULL, TEXT("no game"), TEXT("EnumProcessModules"), MB_OK);
 	}
 	else
 	{
@@ -429,31 +459,45 @@ int main(int argc, char* argv[])
 		if (!bRetn)
 		{
 			CloseHandle(_hProcess);
-			//::MessageBoxW(NULL, TEXT("很遗憾,获取模块句柄失败"), TEXT("EnumProcessModules"), MB_OK);
+			::MessageBoxW(NULL, TEXT("find base address fail"), TEXT("EnumProcessModules"), MB_OK);
 
 		}
 		else
 		{
+			base_address = nHmodule[0];
+			cout << base_address << endl;
+
+			/*
 			for (int i = 0; i<(cbNeeded / sizeof(HMODULE)); i++)
 			{
-				cout << nHmodule[i] << endl;
-				cout << TEXT("**********************") << endl;
-				cout << i << endl;
-				cout << TEXT("======================") << endl;
+			cout << nHmodule[i] << endl;
+			cout << TEXT("**********************") << endl;
+			cout << i << endl;
+			cout << TEXT("======================") << endl;
 
 			}
+			*/
 		}
 
 	}
-	
+
 	//printf("%llx\n", getLoadAddress(pid));
 	if (!_hProcess) CloseHandle(_hProcess);
 
 
+	//test 1ae9e
+
 	HandleGatewayServer handleGatewayServer;
 	handleGatewayServer.Init();
+	return 0;
+}
+
+int main(int argc, char* argv[])
+{
+	func2(0);
 
 	//getget(pid);
+	/*
 	pid = process::find(L"TslGame.exe");
 	if (process::attach(pid)) {
 		
@@ -462,14 +506,7 @@ int main(int argc, char* argv[])
 		wchar_t buf[1024];
 		PVOID  address=0;
 		sscanf(argv[2], "%llx", &address);
-		/*
-		for (int i = 0; i < 200; i++)
-		{
-			address = PVOID (i * 1024);
-			process::read(address, &buf, 1024);
-			if (wcscmp(buf,L"windows")==0)
-				printf("%x\n", address);
-		}*/
+	
 
 		process::read(address, &buf, 1024);
 		printf("%s\n", buf);
@@ -477,5 +514,6 @@ int main(int argc, char* argv[])
 		process::detach();
 
 	}
+*/
   return 0;
 }

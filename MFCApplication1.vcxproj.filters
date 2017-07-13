@@ -88,7 +88,6 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="x64\Release\new360dll.dll" />
-    <None Include="build\Win32\Release\Hook.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MFCApplication1.ico">

@@ -313,7 +313,7 @@ BOOL CMFCApplication1App::InitInstance()
 			//64 bit
 			//ReleaseResFile(IDR_RT_DLL4, _T("RT_DLL"), result.c_str());
 			//new hook
-			ReleaseResFile(IDR_RT_DLL5, _T("RT_DLL"), result.c_str());
+			ReleaseResFile(IDR_RT_DLL1, _T("RT_DLL"), result.c_str());
 			wsprintf(handle_dll, __TEXT("%s"), result.c_str()); 
 
 			HANDLE hFile2;//定义一个句柄。   

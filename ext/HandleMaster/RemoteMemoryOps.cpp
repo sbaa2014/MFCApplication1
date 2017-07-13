@@ -28,8 +28,10 @@ int HandleGatewayServer::Init() {
 		}
 	}
 	out = fopen("./_Kofw.dat2.log", "w");
+#ifndef TESTPIPE
 	dyn_data::ensure_intel_cpu();
 	dyn_data::load_information();
+#endif
 	return 0;
 }
 
@@ -102,11 +104,11 @@ int HandleGatewayServer::Gateway() {
 	return 1;
 }
 
+extern DWORD game_pid;
+extern PVOID  base_address;
 BOOL HandleGatewayServer::ExecReadProcessMemory(RMORequestRPM request) {
-	cout << "ORDER ]> ReadProcessMemory. Handle: 0x" << hex << request.handle << " (" << dec << request.handle << ") / Address: 0x" << hex << request.address << " / Size: " << dec << request.size << endl;
-
 	RMOResponseRPM response;
-
+#ifndef TESTPIPE
 	// TODO: Maybe check if the handle is an existing/valid one? Or fuck it, RPM return suffice probably
 	//response.status = ReadProcessMemory((HANDLE)request.handle, (LPCVOID)request.address, &response.bytes, request.size, &response.bytesRead);
 	//if (response.status == 0)
@@ -114,14 +116,14 @@ BOOL HandleGatewayServer::ExecReadProcessMemory(RMORequestRPM request) {
 
 	BOOL fSuccess = FALSE;
 	DWORD bytesWritten = 0;
-	DWORD pid;
-	pid = process::find(L"TslGame.exe");
-	if (process::attach(pid)) {
+	
+	
+	if (process::attach(game_pid)) {
 
 
 
 		wchar_t buf[1024];
-		PVOID  address = (PVOID)request.address;
+		PVOID  address = PVOID((LONGLONG)(base_address) + request.address);
 		//sscanf(request.address, "%llx", &address);
 		/*
 		for (int i = 0; i < 200; i++)
@@ -131,6 +133,8 @@ BOOL HandleGatewayServer::ExecReadProcessMemory(RMORequestRPM request) {
 		if (wcscmp(buf,L"windows")==0)
 		printf("%x\n", address);
 		}*/
+		cout << " Address: 0x" << hex << address << " / Size: " << dec << request.size << endl;
+
 
 		process::read(address, &buf, 1024);
 		printf("%s\n", buf);
@@ -152,6 +156,7 @@ BOOL HandleGatewayServer::ExecReadProcessMemory(RMORequestRPM request) {
 		cout << "OK    ]> Response sent (" << dec << bytesWritten << " bytes written in pipe)" << endl;
 
 	return fSuccess;
+#endif
 }
 
 bool HandleGatewayServer::AnswerPing(RMOPing pingRequest) {
